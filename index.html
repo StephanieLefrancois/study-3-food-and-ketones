@@ -478,7 +478,11 @@ h1{font-family:var(--serif);font-size:26px;line-height:1.2;font-weight:400;lette
 .ring-pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .ring-pct b{font-family:var(--sans);font-weight:700;font-size:54px;letter-spacing:-2.6px;line-height:1;color:var(--ink)}
 .ring-pct span{font-size:10.5px;font-weight:500;letter-spacing:1px;color:var(--muted);margin-top:5px}
-.chips{display:flex;flex-direction:column;gap:8px;margin-top:auto;padding-top:34px}
+.chips-label{
+  font-size:10.5px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--muted);margin:auto 0 10px;padding-top:34px;
+}
+.chips{display:flex;flex-direction:column;gap:8px}
 .chip{
   display:flex;justify-content:space-between;align-items:center;gap:12px;
   border:1px solid var(--line);border-radius:12px;padding:12px 14px;
@@ -658,6 +662,7 @@ h2,h3,h4,.rc-title,.act-block h2,.tile p,.rsheet h2,.coach-body h2{
         <div class="ring-pct"><b id="ringPct">0%</b><span>OF WEEKLY CARBS</span></div>
       </div>
 
+      <p class="chips-label" id="chipsLabel"></p>
       <div class="chips" id="chips"></div>
     </section>
 
@@ -902,7 +907,8 @@ h2,h3,h4,.rc-title,.act-block h2,.tile p,.rsheet h2,.coach-body h2{
 
 <script>
 const DATA = {
-  "patternsTitle": "Most of your carbs came from breakfast",
+  "patternsTitle": "Most of your logged carbs came from breakfast",
+  "chipsLabel": "Breakfasts with the most carbs",
   "week": "July 31 - Aug 6 2026",
   "showExplainer": false,
   "goal": "Swap sweet breakfast bowls for fat-based ones",
@@ -1568,6 +1574,8 @@ const patSub = document.getElementById('patternsSub');
 if(DATA.patternsSub === '') patSub.remove();
 else patSub.textContent = DATA.patternsSub ||
   `Together, these three foods made up ${sharePct}% of the carbs you logged last week.`;
+const chipsLabel = document.getElementById('chipsLabel');
+DATA.chipsLabel ? chipsLabel.textContent = DATA.chipsLabel : chipsLabel.remove();
 document.getElementById('chips').innerHTML = DATA.patterns.map((p,i)=>`
   <div class="chip up d${i+4}"><span>${p.name}</span><b>${p.g}g</b></div>`).join('');
 }
@@ -1855,8 +1863,8 @@ function renderSummary(){
     <div class="bonus-card">
       <div class="bonus-head">
         <span class="ic">${BOLT_ASK}</span>
-        <div><b>Bonus: try testing your ketones</b>
-          <p>One reading tells you whether the swap is working, days before the scale does.</p>
+        <div><b>Bonus: See how your body responds</b>
+          <p>Check your ketones 2+ hours after eating to see whether you're burning fat for fuel.</p>
         </div>
       </div>
       <div class="steps3">
