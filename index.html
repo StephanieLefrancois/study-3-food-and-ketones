@@ -1,0 +1,2163 @@
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Weekly Report — Study prototype 2 (food + ketones · week 3 · stalled)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#0c1422;
+  --ink-2:#4a5568;
+  --muted:#4a5568;
+  --line:#e2e8f0;
+  --card:#ffffff;
+  --blue:#0052cc;
+  --lav:#8f93ea;
+  --lav-soft:#c9cbf7;
+  --green:#2fa079;
+  --amber:#f0ab2e;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:'Figtree', system-ui, sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:var(--sans);background:#dfe3ea;display:grid;place-items:center;overflow:hidden}
+
+.phone{
+  position:relative;width:390px;height:844px;background:#fff;border-radius:44px;overflow:hidden;
+  box-shadow:0 40px 90px -20px rgba(20,30,60,.45), 0 0 0 11px #1b1d22, 0 0 0 12px #33363d;
+  user-select:none;
+}
+@media (max-width:430px),(max-height:880px){
+  body{background:#fff}
+  .phone{width:100vw;height:100vh;height:100dvh;border-radius:0;box-shadow:none}
+}
+
+.statusbar{
+  position:absolute;top:0;left:0;right:0;height:54px;z-index:60;
+  display:flex;align-items:center;justify-content:space-between;padding:16px 30px 0;
+  font-size:15px;font-weight:600;letter-spacing:.2px;color:var(--ink);pointer-events:none;
+}
+.statusbar svg{display:block}
+.progress{
+  position:absolute;top:58px;left:24px;right:24px;z-index:40;display:flex;gap:5px;
+  pointer-events:none;transition:opacity .3s ease;
+}
+/* the indicator only appears once the story is actually running */
+.phone.at-start .progress{opacity:0}
+.seg{flex:1;height:4px;border-radius:2px;background:#dcdfe5;overflow:hidden}
+.seg i{display:block;height:100%;width:0;background:#0c1422;border-radius:2px;transition:width .34s cubic-bezier(.3,.8,.3,1)}
+.close{
+  position:absolute;top:78px;right:22px;z-index:45;width:34px;height:34px;border:0;background:none;padding:0;
+  display:grid;place-items:center;cursor:pointer;color:var(--ink);border-radius:50%;
+}
+.close:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.homebar{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:138px;height:5px;border-radius:3px;background:#0c1422;z-index:58;pointer-events:none}
+.recipe-open .progress,.recipe-open .close{opacity:0;pointer-events:none;transition:opacity .2s ease}
+
+.deck{position:absolute;inset:0;z-index:10}
+.slide{
+  position:absolute;inset:0;padding:160px 26px 46px;background:#fff;
+  opacity:0;visibility:hidden;transform:translateX(var(--x,7%)) scale(.985);
+  transition:opacity .42s ease, transform .52s cubic-bezier(.22,.9,.24,1), visibility .52s;overflow:hidden;
+}
+.slide.on{opacity:1;visibility:visible;transform:none;transition-delay:.02s}
+.slide.past{--x:-7%}
+
+h1{font-family:var(--serif);font-size:26px;line-height:1.2;font-weight:400;letter-spacing:-.2px;text-align:center;margin:0 0 8px;color:var(--ink)}
+.sub{font-size:13.5px;line-height:1.45;color:var(--muted);text-align:center;margin:0 auto;max-width:305px}
+
+.slide .up{opacity:0;transform:translateY(14px)}
+.slide.on .up{animation:up .62s cubic-bezier(.2,.8,.2,1) forwards}
+.slide.on .d1{animation-delay:.06s}
+.slide.on .d2{animation-delay:.16s}
+.slide.on .d3{animation-delay:.28s}
+.slide.on .d4{animation-delay:.40s}
+.slide.on .d5{animation-delay:.52s}
+@keyframes up{to{opacity:1;transform:none}}
+
+/* 1 · headline + top action, one scroll */
+#s1{
+  padding:0;
+  background:linear-gradient(178deg,#eaf0fb 0%,#f2f5fc 34%,#fdfdfe 62%,#fff 100%);
+  display:flex;flex-direction:column;
+}
+.s1-scroll{
+  flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  padding:104px 26px 340px;display:flex;flex-direction:column;align-items:center;
+}
+.s1-scroll::-webkit-scrollbar{display:none}
+.s1-hero{
+  min-height:560px;width:100%;display:flex;flex-direction:column;align-items:center;flex:none;
+}
+#s1.simple .s1-hero{min-height:0;flex:1;justify-content:center;padding-bottom:40px}
+.avatar{width:46px;height:46px;border-radius:50%;overflow:hidden;box-shadow:0 1px 3px rgba(20,30,60,.18);flex:none}
+.week{font-size:12.5px;color:var(--ink-2);margin:12px 0 0;letter-spacing:.1px}
+.headline{
+  font-family:var(--serif);font-weight:400;font-size:27px;line-height:1.42;letter-spacing:-.25px;
+  text-align:center;color:#0f1115;margin:40px 4px 0;
+}
+.headline em{font-style:normal;color:var(--blue)}
+.reassure{
+  font-size:14px;line-height:20px;color:var(--ink-2);text-align:center;
+  margin:18px 6px 0;max-width:300px;
+}
+.scroll-hint{
+  margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:12px;
+  transition:opacity .3s ease;
+}
+.scroll-hint.gone{
+  opacity:0;pointer-events:none;height:0;margin:0;overflow:hidden;
+  transition:opacity .22s ease, height .3s ease, margin .3s ease;
+}
+.chev-chip{
+  width:42px;height:42px;border-radius:50%;background:#fff;border:0;padding:0;
+  display:grid;place-items:center;cursor:pointer;
+  box-shadow:0 8px 20px -8px rgba(20,40,90,.4), 0 0 0 1px rgba(20,30,60,.06);
+  animation:nudgeDown 1.7s ease-in-out infinite;
+}
+.chev-chip:active{animation:none;transform:scale(.92)}
+.chev-chip:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+@keyframes nudgeDown{
+  0%,100%{transform:translateY(-4px)}
+  50%{transform:translateY(5px)}
+}
+.scroll-cue{
+  font-size:13.5px;font-weight:600;color:var(--blue);margin:0;letter-spacing:-.1px;
+}
+
+.act-block{
+  width:100%;margin-top:44px;
+  opacity:0;transform:translateY(22px);
+  transition:opacity .6s ease, transform .65s cubic-bezier(.2,.8,.2,1);
+}
+.act-block.seen{opacity:1;transform:none}
+.act-block h2{font-family:var(--serif);font-size:24px;font-weight:400;letter-spacing:-.3px;text-align:center;margin:0;color:var(--ink)}
+.s1-cta{
+  position:absolute;left:0;right:0;bottom:0;z-index:20;padding:16px 26px 32px;
+  background:linear-gradient(to top,#fff 56%,rgba(255,255,255,.94) 76%,rgba(255,255,255,0));
+  pointer-events:none;opacity:0;transform:translateY(14px);
+  transition:opacity .38s ease, transform .42s cubic-bezier(.2,.8,.2,1);
+}
+.s1-cta .btn{pointer-events:none}
+.s1-cta.show{opacity:1;transform:none}
+.s1-cta.show .btn{pointer-events:auto}
+
+
+/* wins block, for members already succeeding */
+.wins-row{display:flex;gap:9px;margin-top:22px}
+.win-tile{
+  flex:1;background:#fff;border:1px solid var(--line);border-radius:15px;
+  padding:15px 8px 13px;text-align:center;
+}
+.win-tile b{display:block;font-size:22px;font-weight:700;letter-spacing:-.8px;line-height:1;color:var(--ink)}
+.win-tile span{display:block;font-size:10.5px;line-height:1.3;color:var(--muted);margin-top:6px}
+.keep-note{
+  display:flex;gap:11px;align-items:flex-start;margin-top:16px;
+  background:#eaf6ef;border:1px solid #bfe3d2;border-radius:14px;padding:13px 14px;
+}
+.keep-note p{margin:0;font-size:12.5px;line-height:1.45;color:#2a4a3e}
+.keep-note b{color:#14322a}
+
+/* logging block, for members with no food logs */
+.log-methods{display:flex;gap:8px;margin-top:20px}
+.log-method{
+  flex:1;background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:13px 6px 11px;text-align:center;
+}
+.log-method .ic{width:34px;height:34px;border-radius:50%;background:#eef2fb;display:grid;place-items:center;margin:0 auto}
+.log-method p{margin:8px 0 0;font-size:10.5px;font-weight:600;color:var(--ink-2);line-height:1.25}
+.log-time{font-size:12px;color:var(--muted);text-align:center;margin:12px 0 0}
+
+.friction{margin-top:22px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}
+.friction h4{font-size:14.5px;font-weight:600;letter-spacing:-.1px;margin:0;color:var(--ink)}
+.friction .chips-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.fchip{
+  font:500 12.5px var(--sans);color:var(--ink-2);background:#f5f7fb;border:1px solid #e4e8f2;
+  border-radius:999px;padding:9px 13px;cursor:pointer;transition:.18s ease;
+}
+.fchip:hover{border-color:#c3cbdd}
+.fchip[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.ftip{
+  display:none;gap:10px;align-items:flex-start;margin-top:13px;padding:12px 13px;
+  background:#eaf6ef;border:1px solid #bfe3d2;border-radius:12px;
+}
+.ftip.on{display:flex}
+.ftip p{margin:0;font-size:12.5px;line-height:1.45;color:#2a4a3e}
+.ftip b{color:#14322a}
+
+.unlock{
+  display:flex;gap:11px;align-items:flex-start;margin-top:14px;
+  background:#eef2fb;border:1px solid #dbe3f4;border-radius:14px;padding:13px 14px;
+}
+.unlock p{margin:0;font-size:12.5px;line-height:1.45;color:#2f4468}
+.unlock b{color:#1c2f52}
+
+/* action cards + buttons */
+.cards{margin-top:20px;display:flex;flex-direction:column;gap:13px}
+.card{
+  border:1px solid var(--line);border-radius:14px;background:var(--card);cursor:pointer;
+  display:flex;justify-content:space-between;gap:12px;padding:15px 0 15px 16px;
+  overflow:hidden;position:relative;transition:background .2s ease;
+}
+.card:active{background:#fafbfd}
+.card h3{font-size:15.5px;font-weight:500;color:var(--ink);margin:2px 0 0;letter-spacing:-.1px}
+.stats{display:flex;margin-top:24px}
+.stat{padding-right:15px;margin-right:15px;border-right:1px solid var(--line)}
+.stat:last-child{border:0;margin:0;padding:0}
+.stat b{display:block;font-size:14.5px;font-weight:500;color:var(--ink)}
+.stat span{font-size:11.5px;color:var(--muted)}
+.thumb{position:relative;width:112px;flex:none;align-self:stretch;border-radius:10px;overflow:hidden}
+.thumb svg{position:absolute;inset:0;width:100%;height:100%}
+.mark{
+  position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:7px;
+  background:rgba(255,255,255,.94);display:grid;place-items:center;border:0;padding:0;cursor:pointer;
+  box-shadow:0 1px 4px rgba(15,25,50,.18);transition:transform .18s ease;
+}
+.mark:active{transform:scale(.9)}
+.btn{
+  width:100%;padding:15px 18px;border-radius:999px;font-family:var(--sans);font-size:15px;font-weight:500;
+  cursor:pointer;border:1.5px solid transparent;
+  transition:transform .18s ease, background .2s ease, opacity .2s ease;
+}
+.btn:active{transform:scale(.985)}
+.btn:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 8px 22px -12px rgba(20,40,90,.55)}
+.btn-primary.saved{background:var(--green)}
+.btn-secondary{background:#fff;color:var(--blue);border-color:var(--blue)}
+
+/* recipe detail */
+.recipe{
+  position:absolute;inset:0;z-index:56;background:#fff;
+  transform:translateX(100%);transition:transform .42s cubic-bezier(.2,.86,.26,1);
+  display:flex;flex-direction:column;padding-top:62px;
+}
+.recipe.on{transform:none}
+.rc-head{flex:none;display:flex;align-items:center;justify-content:space-between;padding:6px 20px 8px}
+.rc-icon{width:36px;height:36px;border:0;background:none;padding:0;display:grid;place-items:center;cursor:pointer;border-radius:50%;transition:transform .18s ease}
+.rc-icon:active{transform:scale(.92)}
+.rc-icon:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.rc-body{flex:1;overflow:auto;padding:4px 26px 8px}
+.rc-body::-webkit-scrollbar{display:none}
+.rc-hero{height:150px;border-radius:16px;overflow:hidden;position:relative}
+.rc-hero svg{position:absolute;inset:0;width:100%;height:100%}
+.rc-title{font-family:var(--serif);font-size:25px;line-height:1.2;font-weight:400;letter-spacing:-.3px;color:var(--ink);margin:18px 0 0}
+.rc-stats{display:flex;margin:14px 0 0}
+.rc-stats .stat b{font-size:15px}
+.rc-why{font-size:14px;line-height:1.5;color:var(--ink-2);margin:16px 0 0;padding:14px 16px;background:#f5f7fb;border-radius:12px}
+.rc-body h4{font-size:11.5px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);margin:24px 0 10px}
+.rc-body ul,.rc-body ol{margin:0;padding-left:20px}
+.rc-body li{font-size:14px;line-height:1.55;color:var(--ink-2);margin-bottom:7px}
+.rc-body li::marker{color:#aeb5c1}
+.rc-pairs{list-style:none;padding:0}
+.rc-pairs li{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:9px;color:var(--ink);font-size:14px}
+.rc-pairs svg{flex:none;margin-top:2px}
+.rc-cta{flex:none;padding:14px 26px 30px;background:#fff;box-shadow:0 -10px 20px -14px rgba(15,25,50,.22)}
+
+/* coach hand-off */
+.coach-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 34px;text-align:center}
+.coach-badge{width:66px;height:66px;border-radius:50%;background:#eef2fb;display:grid;place-items:center;margin-bottom:22px}
+.coach-body h2{font-family:var(--serif);font-size:25px;line-height:1.24;font-weight:400;letter-spacing:-.3px;color:var(--ink);margin:0}
+.coach-body p{font-size:14.5px;line-height:1.55;color:var(--ink-2);margin:14px 0 0;max-width:270px}
+.coach-note{font-size:11.5px;color:#98a0ad;margin-top:14px;min-height:16px;transition:opacity .2s ease}
+
+/* 2 · weight */
+.chart{margin-top:34px;position:relative;touch-action:none}
+.legend{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;font-size:12.5px;color:var(--ink-2)}
+.swatch{width:11px;height:11px;border-radius:2.5px;display:inline-block}
+.tiles{display:flex;gap:12px;margin-top:48px}
+.tile{flex:1;border:1px solid var(--line);border-radius:14px;padding:15px 16px 17px}
+.tile p{margin:0;font-family:var(--serif);font-size:15px;color:var(--ink)}
+.tile b{font-size:29px;font-weight:500;letter-spacing:-.6px;color:var(--ink);display:inline-block;margin-top:9px}
+.tile i{font-style:normal;font-size:13px;color:var(--muted);margin-left:4px}
+.slide.on .trend path.line{animation:draw 1.5s .3s cubic-bezier(.4,.1,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+/* 3 · carbs + ketones */
+.carbs{position:relative;margin-top:48px;padding:0 2px}
+.band-label{
+  font-size:10.5px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--muted);margin:0 0 9px 30px;
+}
+.band-label b{color:var(--ink-2);font-weight:600}
+.plot{position:relative;height:162px}
+.target{position:absolute;left:30px;right:0;border-top:1.5px dashed #0c1422}
+.target span{position:absolute;left:-30px;top:-12px;background:#0c1422;color:#fff;font-size:11px;font-weight:500;padding:4px 8px;border-radius:6px;white-space:nowrap}
+.bars{position:absolute;left:30px;right:0;bottom:0;top:0;display:flex;align-items:flex-end}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.bar{width:15px;border-radius:999px;transform:scaleY(0);transform-origin:bottom;transition:transform .85s cubic-bezier(.2,.85,.25,1)}
+.slide.on .bar{transform:scaleY(1)}
+.bar.solid{background:var(--lav);border:1.5px solid var(--lav)}
+.bar.hollow{background:#f4f5fe;border:1.5px solid var(--lav-soft)}
+.val{font-size:12px;color:var(--ink);margin-bottom:8px;opacity:0}
+.slide.on .val{animation:up .5s .55s ease forwards}
+
+.kband{margin-top:14px}
+.kplot{position:relative;height:104px}
+.ktarget{position:absolute;left:30px;right:0;border-top:1.5px dashed #0c1422}
+.ktarget span{
+  position:absolute;left:-30px;top:-12px;background:#0c1422;color:#fff;
+  font-size:11px;font-weight:500;padding:4px 8px;border-radius:6px;white-space:nowrap;
+}
+.kbars{position:absolute;left:30px;right:0;bottom:0;top:0;display:flex;align-items:flex-start}
+.kcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%}
+.kbar{
+  width:13px;border-radius:999px;
+  transform:scaleY(0);transform-origin:top;transition:transform .8s cubic-bezier(.2,.85,.25,1);
+}
+.slide.on .kbar{transform:scaleY(1)}
+.kbar.z-carb{background:#eef4fb;border:1.5px solid #9cc7ee}
+.kbar.z-mixed{background:#dff0e6;border:1.5px solid #8ecfa6}
+.kbar.z-fat{background:#2fa079;border:1.5px solid #2fa079}
+.kbar.locked{background:#e9ebef;border:1.5px dashed #b9c0cd}
+.klock-wrap{position:relative}
+.lock-pill{
+  position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:3;
+  display:inline-flex;align-items:center;gap:9px;white-space:nowrap;
+  background:#fff;border:1px solid var(--line);border-radius:999px;padding:11px 17px;
+  font-size:12.5px;font-weight:600;color:var(--ink);
+  box-shadow:0 8px 22px -10px rgba(20,40,90,.4);
+}
+.key.dim{opacity:.55}
+
+.key{margin-top:30px}
+.key-top{margin:0 0 26px}
+.key-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 18px;font-size:11.5px;color:var(--ink-2)}
+.key-row + .key-row{margin-top:11px}
+.key-lab{
+  font-size:9.5px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;
+  color:var(--muted);flex:none;
+}
+.key-row span{display:inline-flex;align-items:center;gap:6px}
+.key-row i{width:11px;height:11px;border-radius:3px;display:inline-block;flex:none}
+.kval{font-size:12px;color:var(--ink);margin-top:8px;opacity:0}
+.slide.on .kval{animation:up .5s .7s ease forwards}
+.kmiss{font-size:11px;color:#b9c0cd;margin-top:6px}
+
+/* the date row sits between the two bands, tying each day's pair together */
+.xaxis{
+  display:flex;margin-left:30px;padding:14px 0 0;
+  border-top:1px solid var(--line);
+}
+.xaxis span{flex:1;text-align:center;font-size:12px;font-weight:600;color:var(--ink);letter-spacing:-.1px}
+.band-label.below{margin:10px 0 0 30px}
+
+/* story-style edge taps on the scrolling screens */
+.edge{
+  position:absolute;top:92px;bottom:0;width:30px;z-index:15;
+  border:0;padding:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.edge-l{left:0}
+.edge-r{right:0}
+.edge:focus-visible{outline:2px solid var(--blue);outline-offset:-4px}
+
+/* recipe bottom sheet, opened from the summary */
+.rscrim{
+  position:absolute;inset:0;z-index:51;background:rgba(12,16,26,.34);
+  opacity:0;visibility:hidden;transition:.3s ease;backdrop-filter:blur(1.5px);
+}
+.rsheet{
+  position:absolute;left:0;right:0;bottom:0;z-index:52;max-height:80%;
+  background:#fff;border-radius:26px 26px 0 0;padding:18px 26px 28px;
+  transform:translateY(101%);transition:transform .44s cubic-bezier(.2,.86,.26,1);
+  display:flex;flex-direction:column;box-shadow:0 -12px 40px -12px rgba(15,25,50,.3);
+}
+.sheet-open .rscrim{opacity:1;visibility:visible}
+.sheet-open .rsheet{transform:none}
+.rsheet .grabber{width:38px;height:4px;border-radius:2px;background:#d8dbe2;margin:0 auto 16px}
+.rsheet h2{font-family:var(--serif);font-size:22px;font-weight:400;letter-spacing:-.3px;margin:0;text-align:center}
+.rsheet .sub{margin-top:7px}
+.rsheet .cards{overflow-y:auto;padding-bottom:4px;margin-top:18px}
+.rsheet .cards::-webkit-scrollbar{display:none}
+.rsheet-close{
+  position:absolute;top:20px;right:22px;width:32px;height:32px;border:0;background:none;
+  display:grid;place-items:center;cursor:pointer;padding:0;
+}
+
+/* three-step graphic on the bonus card */
+.steps3{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:4px;
+  margin-top:14px;background:#eef4fd;border-radius:12px;padding:14px 8px 12px;
+}
+.step3{flex:1;text-align:center}
+.step3 .ic{height:52px;display:grid;place-items:center}
+.step3 p{margin:7px 0 0;font-size:10px;line-height:1.3;font-weight:600;color:#2c3a52}
+.arrow3{flex:none;padding-top:20px;color:#a3b0c6}
+.bonus-card{background:#fff;border:1px solid #dde4f1;border-radius:16px;padding:15px 16px;margin-top:14px;box-shadow:0 6px 18px -10px rgba(20,40,90,.32)}
+.bonus-head{display:flex;gap:12px;align-items:flex-start}
+.bonus-head .ic{width:40px;height:40px;border-radius:11px;background:#fff;flex:none;display:grid;place-items:center;box-shadow:0 1px 3px rgba(20,60,45,.14)}
+.bonus-head b{display:block;font-size:14.5px;font-weight:600;color:#14322a;letter-spacing:-.1px}
+.bonus-head p{margin:5px 0 0;font-size:12.5px;line-height:1.45;color:#40584f}
+
+/* 7 · weight vs ketones */
+#s7 .dual{margin-top:48px;position:relative;touch-action:none}
+.chart-tip{
+  position:absolute;transform:translate(-50%,-118%);z-index:5;pointer-events:none;
+  background:#0c1422;color:#fff;border-radius:11px;padding:9px 11px;
+  font-size:11.5px;line-height:1.4;white-space:nowrap;opacity:0;transition:opacity .15s ease;
+  box-shadow:0 8px 20px -8px rgba(10,15,30,.55);
+}
+.chart-tip.on{opacity:1}
+.chart-tip b{display:block;font-size:13px;font-weight:600;letter-spacing:-.2px}
+.chart-tip span{color:rgba(255,255,255,.72)}
+.chart-tip em{font-style:normal;color:#9fd8bd;font-weight:600}
+.wdot{cursor:pointer}
+.carbs{touch-action:none}
+.scrub-guide{
+  position:absolute;top:0;bottom:0;width:1px;background:#c3cad6;opacity:0;
+  transition:opacity .15s ease;pointer-events:none;
+}
+.col.scrubbed .bar,.kcol.scrubbed .kbar{filter:brightness(.94)}
+.col.scrubbed .val,.kcol.scrubbed .kval{font-weight:700}
+#s7 .legend-dual{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:10px 18px;
+  margin-top:16px;font-size:11.5px;color:var(--ink-2);
+}
+#s7 .legend-dual span{display:inline-flex;align-items:center;gap:7px}
+#s7 .legend-dual i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.slide.on #dualLine{animation:draw 1.5s .3s cubic-bezier(.4,.1,.2,1) forwards}
+.dual-bar{transform:scaleY(0);transform-origin:bottom;transform-box:fill-box;transition:transform .8s cubic-bezier(.2,.85,.25,1)}
+.slide.on .dual-bar{transform:scaleY(1)}
+
+/* 4 · how Virta works */
+#s4{padding:160px 22px 34px;display:flex;flex-direction:column}
+.vcard{padding:0}
+.vcard h1{font-size:26px;margin-bottom:8px}
+.vcard .sub{font-size:13.5px;max-width:284px}
+
+.sliders{display:grid;grid-template-columns:76px 1fr 76px;gap:8px;margin-top:48px;justify-content:center}
+.sl-col{display:flex;flex-direction:column;align-items:center}
+.sl-title{
+  font-size:13px;font-weight:600;letter-spacing:-.1px;
+  color:var(--ink);text-align:center;line-height:1.2;height:17px;margin-bottom:16px;
+}
+.sl-cap{font-size:10px;color:var(--muted);letter-spacing:.1px;height:16px;display:flex;align-items:center;gap:4px}
+.sl-track{position:relative;height:264px;margin:4px 0}
+.sl-track.narrow{width:8px;border-radius:4px;background:#e7eaef}
+.sl-track.zoned{width:68px;border-radius:14px;overflow:hidden;background:#f2f5f8;display:flex;flex-direction:column}
+.zone{flex:1;display:grid;place-items:center;padding:0 7px;border-bottom:1px solid rgba(255,255,255,.9);transition:background .3s ease}
+.zone:last-child{border-bottom:0}
+.zone span{font-size:10.5px;line-height:1.22;text-align:center;color:#8b93a0;letter-spacing:.1px;transition:color .3s ease}
+.zone.z1{background:#e9f4f2}
+.zone.z2{background:#edf7f1}
+.zone.z3{background:#eef3fa}
+.zone.live.z1{background:#d5ebe7}
+.zone.live.z2{background:#dcf1e6}
+.zone.live.z3{background:#dfeaf8}
+.zone.live span{color:#4b5563;font-weight:500}
+
+.sl-thumb{position:absolute;left:50%;transform:translateX(-50%);bottom:0;display:grid;place-items:center}
+.sl-thumb-lg{
+  width:46px;height:46px;border-radius:50%;background:#fff;padding:3px;
+  box-shadow:0 4px 14px -4px rgba(20,40,90,.34), 0 0 0 1px rgba(20,30,60,.06);
+  cursor:grab;touch-action:none;
+}
+.sl-thumb-lg:active{cursor:grabbing}
+.sl-thumb-lg:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.sl-thumb-sm{
+  width:30px;height:30px;border-radius:50%;background:#fff;
+  border:1px solid #e4e7ed;box-shadow:0 1px 4px rgba(20,30,60,.10);
+}
+.bolt{display:grid;place-items:center}
+.bolt.pulse{animation:boltPulse .45s ease}
+@keyframes boltPulse{0%{transform:scale(1)}45%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+.insight{
+  display:flex;gap:11px;align-items:flex-start;
+  margin-top:22px;padding:13px 14px;border-radius:14px;
+  background:#f3f4fb;border:1px solid #dfe3f5;
+  transition:background .35s ease, border-color .35s ease;
+}
+.insight .ico{flex:none;width:32px;height:32px;line-height:0;margin-top:1px}
+.ins-copy b{display:block;font-size:14px;font-weight:600;letter-spacing:-.15px;color:var(--ink);margin-bottom:3px}
+.insight p{margin:0;font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+
+/* 5 · share of carbs */
+.ring-wrap{position:relative;width:206px;height:206px;margin:48px auto 0}
+.ring-wrap svg{transform:rotate(-90deg);display:block}
+.ring-pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct b{font-family:var(--sans);font-weight:700;font-size:54px;letter-spacing:-2.6px;line-height:1;color:var(--ink)}
+.ring-pct span{font-size:10.5px;font-weight:500;letter-spacing:1px;color:var(--muted);margin-top:5px}
+.chips{display:flex;flex-direction:column;gap:8px;margin-top:auto;padding-top:34px}
+.chip{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+}
+.chip span{font-size:13.5px;color:var(--ink-2)}
+.chip b{font-size:14.5px;font-weight:600;letter-spacing:-.2px;color:var(--ink)}
+
+/* 6 · closing summary */
+#s6{
+  background:linear-gradient(178deg,#eaf0fb 0%,#f2f5fc 30%,#fdfdfe 58%,#fff 100%);
+  padding:0;display:flex;flex-direction:column;
+}
+.s6-scroll{
+  flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  padding:160px 26px 168px;
+}
+.s6-scroll::-webkit-scrollbar{display:none}
+.s6-cta{
+  position:absolute;left:0;right:0;bottom:0;z-index:20;padding:16px 26px 32px;
+  background:linear-gradient(to top,#fff 56%,rgba(255,255,255,.94) 78%,rgba(255,255,255,0));
+}
+.sum-meals{margin-top:16px}
+.sum-meals .lab{
+  font-size:10.5px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--muted);margin:0 0 10px;
+}
+.sum-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:#8b93a1;text-align:center;margin:0}
+#s6 h1{margin-top:10px}
+.seal{width:56px;height:56px;border-radius:50%;background:#e4eefb;display:grid;place-items:center;margin:0 auto 16px}
+.goal-card{
+  background:#fff;border:1px solid #dde4f1;border-radius:18px;padding:18px 18px 16px;margin-top:22px;
+  box-shadow:0 6px 18px -10px rgba(20,40,90,.32);
+}
+.goal-card .lab{font-size:10.5px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;color:var(--blue);margin:0}
+.goal-card .txt{display:flex;gap:11px;align-items:flex-start;margin-top:11px}
+.goal-card p{margin:0;font-size:19px;line-height:1.32;font-weight:600;letter-spacing:-.3px;color:var(--ink)}
+.goal-card .hint{font-size:12.5px;color:var(--muted);font-weight:400;margin-top:7px;line-height:1.4}
+.goal-card .btn{margin-top:16px;font-size:14.5px;padding:13px 16px}
+.sum-btns{display:flex;flex-direction:column;gap:9px}
+
+.replay{position:absolute;inset:0;z-index:60;display:grid;place-items:center;background:rgba(250,251,253,.92);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:.3s}
+.replay.on{opacity:1;visibility:visible}
+.replay button{font:500 14px var(--sans);color:#fff;background:#0c1422;border:0;padding:14px 26px;border-radius:999px;cursor:pointer}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  .slide{transform:none}
+  .slide .up{opacity:1;transform:none}
+  .bar{transform:scaleY(1)}
+}
+
+/* ===== Substrate theme override — tokens from the Substrate design system ===== */
+:root{
+  --font-family:'Figtree', system-ui, sans-serif;
+  --decorative:'Newsreader', Georgia, serif;   /* Ag Decorative — stand-in face */
+  --serif:var(--decorative);
+  --sans:'Figtree', system-ui, sans-serif;
+
+  --font-size-body-medium:16px;
+  --font-size-body-small:14px;
+  --line-height-body-medium:24px;
+  --line-height-body-small:20px;
+
+  --space-xs:4px; --space-sm:8px; --space-md:12px; --space-lg:16px; --space-xl:24px;
+  --radius-b:8px; --border-thin:1px;
+
+  --ink:#0c1422;        /* text/primary   */
+  --ink-2:#4a5568;      /* text/secondary */
+  --muted:#4a5568;
+  --line:#e2e8f0;
+  --card:#ffffff;
+  --blue:#0052cc;       /* icon/info/primary */
+  --elevation-1:0px 4px 24px 0px rgba(12,20,34,0.12);
+}
+body{font-family:var(--font-family)}
+
+/* headers use Ag Decorative/H1 28/36; everything else is Figtree */
+h1,.headline{
+  font-family:var(--decorative) !important;
+  font-weight:400 !important;
+  font-size:28px !important;
+  line-height:36px !important;
+  letter-spacing:0 !important;
+}
+h2,h3,h4,.rc-title,.act-block h2,.tile p,.rsheet h2,.coach-body h2{
+  font-family:var(--font-family) !important;
+  font-weight:700 !important;
+  letter-spacing:0 !important;
+}
+.sub{font-size:var(--font-size-body-small);line-height:var(--line-height-body-small);color:var(--ink-2)}
+.act-block h2,.rsheet h2,.rc-title{font-size:20px;line-height:28px}
+.goal-card p{font-size:var(--font-size-body-medium);line-height:var(--line-height-body-medium);font-weight:700}
+
+/* surfaces: white background, 8px corners, single elevation */
+#s1,#s6{background:var(--color-background-primary,#ffffff)}
+.card,.tile,.chip,.goal-card,.bonus-card,.keto-ask,.win-tile,.log-method,.friction,.unlock,
+.rc-why,.rc-pairs li,.row,.vcard,.keep-note{border-radius:var(--radius-b) !important}
+.card,.tile,.chip,.goal-card,.bonus-card,.win-tile,.log-method,.friction{border:var(--border-thin) solid var(--line)}
+.goal-card,.bonus-card,.rsheet{box-shadow:var(--elevation-1)}
+.thumb,.rc-hero{border-radius:var(--radius-b)}
+.rsheet{border-radius:var(--radius-b) var(--radius-b) 0 0}
+
+/* buttons: 8px, not pills */
+.btn,.more-btn,.pill{border-radius:var(--radius-b) !important;font-weight:700}
+.btn{font-size:var(--font-size-body-medium);line-height:var(--line-height-body-medium)}
+.btn-primary{background:var(--blue);box-shadow:none}
+.btn-primary.saved{background:var(--green)}
+.btn-secondary{border-color:var(--blue);color:var(--blue)}
+.fchip{border-radius:var(--radius-b)}
+
+/* chart chrome */
+.target span,.ktarget span{border-radius:var(--radius-b);background:var(--ink)}
+.chart-tip{border-radius:var(--radius-b);background:var(--ink);box-shadow:var(--elevation-1)}
+.xaxis span{font-family:var(--font-family);font-weight:700;color:var(--ink)}
+.key-row{font-size:12px;color:var(--ink-2)}
+.key-lab{color:var(--ink-2)}
+.seal,.coach-badge{background:#e5eefb}
+
+</style>
+
+<div class="phone" id="phone">
+
+  <div class="statusbar">
+    <span>9:41</span>
+    <span style="display:flex;align-items:center;gap:6px">
+      <svg width="18" height="12" viewBox="0 0 18 12"><g fill="#0c1422"><rect x="0" y="7.5" width="3" height="4.5" rx="1"/><rect x="4.6" y="5.2" width="3" height="6.8" rx="1"/><rect x="9.2" y="2.8" width="3" height="9.2" rx="1"/><rect x="13.8" y="0" width="3" height="12" rx="1"/></g></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 10.6a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" fill="#0c1422"/><path d="M3.4 5.6a6.6 6.6 0 019.2 0M1 3.1a10 10 0 0114 0" stroke="#0c1422" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13"><rect x="0" y="0" width="23" height="13" rx="4" fill="#0c1422"/><rect x="2" y="2" width="19" height="9" rx="2.4" fill="#0c1422"/><path d="M24.4 4.4v4.2a2.6 2.6 0 000-4.2z" fill="#0c1422"/></svg>
+    </span>
+  </div>
+
+  <div class="progress" id="progress"></div>
+
+  <button class="close" id="close" aria-label="Close recap">
+    <svg width="17" height="17" viewBox="0 0 17 17"><path d="M1 1l15 15M16 1L1 16" stroke="#0c1422" stroke-width="1.7" stroke-linecap="round"/></svg>
+  </button>
+
+  <div class="deck" id="deck">
+
+    <section class="slide" id="s1">
+      <button class="edge edge-l" data-nav="prev" aria-label="Previous screen"></button>
+      <button class="edge edge-r" data-nav="next" aria-label="Next screen"></button>
+      <div class="s1-scroll" id="s1scroll">
+        <div class="s1-hero">
+          <div class="avatar up d1" id="avatarSlot"></div>
+          <p class="week up d2" id="week"></p>
+          <p class="headline up d3" id="headline"></p>
+          <p class="reassure up d4" id="reassure"></p>
+          <div class="scroll-hint up d5" id="scrollHint">
+            <button class="chev-chip" id="scrollDown" aria-label="Scroll to your swaps">
+              <svg width="20" height="13" viewBox="0 0 20 13" fill="none" stroke="#0052cc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2.5l8 8 8-8"/></svg>
+            </button>
+            <p class="scroll-cue" id="scrollCue"></p>
+          </div>
+        </div>
+
+        <div class="act-block" id="actBlock">
+          <h2 id="actTitle"></h2>
+          <p class="sub" id="actSub"></p>
+          <div class="cards" id="cards"></div>
+          <div id="actSteps"></div>
+        </div>
+      </div>
+      <div class="s1-cta">
+        <button class="btn btn-primary" id="learnWhy"></button>
+      </div>
+    </section>
+
+    <section class="slide" id="s5">
+      <h1 class="up d1" id="patternsTitle"></h1>
+      <p class="sub up d2" id="patternsSub"></p>
+
+      <div class="ring-wrap up d3">
+        <svg width="206" height="206" viewBox="-103 -103 206 206" aria-hidden="true">
+          <circle r="88" fill="none" stroke="#eef0f6" stroke-width="16"/>
+          <circle id="ringArc" r="88" fill="none" stroke="#8f93ea" stroke-width="16" stroke-linecap="round"/>
+        </svg>
+        <div class="ring-pct"><b id="ringPct">0%</b><span>OF WEEKLY CARBS</span></div>
+      </div>
+
+      <div class="chips" id="chips"></div>
+    </section>
+
+    <section class="slide" id="s3">
+      <h1 class="up d1" id="carbsTitle"></h1>
+      <p class="sub up d2" id="carbsSub"></p>
+
+      <div class="carbs up d3">
+        <div class="chart-tip"></div>
+        <div class="scrub-guide"></div>
+        <div class="key key-top">
+          <div class="key-row">
+            <span><i style="background:#8f93ea"></i>3+ meals logged</span>
+            <span><i style="background:#f4f5fe;border:1.5px solid #c9cbf7"></i>Under 3 meals</span>
+          </div>
+        </div>
+        <div class="plot">
+          <div class="target" id="target"><span id="targetLabel"></span></div>
+          <div class="bars" id="bars"></div>
+        </div>
+        <div class="xaxis" id="xaxis"></div>
+      </div>
+    </section>
+
+    <section class="slide" id="s9">
+      <h1 class="up d1" id="lockTitle"></h1>
+      <p class="sub up d2" id="lockSub"></p>
+
+      <div class="carbs up d3">
+        <div class="chart-tip"></div>
+        <div class="scrub-guide"></div>
+        <div class="key key-top">
+          <div class="key-row">
+            <span><i style="background:#8f93ea"></i>3+ meals logged</span>
+            <span><i style="background:#f4f5fe;border:1.5px solid #c9cbf7"></i>Under 3 meals</span>
+          </div>
+        </div>
+        <div class="plot">
+          <div class="target" id="target3"><span id="targetLabel3"></span></div>
+          <div class="bars" id="bars3"></div>
+        </div>
+
+        <div class="xaxis" id="xaxis3"></div>
+
+        <div class="kband klock-wrap">
+          <div class="kplot">
+            <div class="ktarget" id="ktarget3"><span>0.5+ in ketosis</span></div>
+            <div class="kbars" id="lockedBars"></div>
+          </div>
+          <span class="lock-pill" id="lockPill"></span>
+        </div>
+
+        <div class="key dim">
+          <div class="key-row">
+            <span><i style="background:#eef4fb;border:1.5px solid #9cc7ee"></i>0.0–0.2 carb-fueled</span>
+            <span><i style="background:#dff0e6;border:1.5px solid #8ecfa6"></i>0.3–0.4 mixed</span>
+            <span><i style="background:#2fa079"></i>0.5+ fat-fueled</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="slide" id="s8">
+      <h1 class="up d1" id="pairTitle"></h1>
+      <p class="sub up d2" id="pairSub"></p>
+
+      <div class="carbs up d3">
+        <div class="chart-tip"></div>
+        <div class="scrub-guide"></div>
+        <div class="key key-top">
+          <div class="key-row">
+            <span><i style="background:#8f93ea"></i>3+ meals logged</span>
+            <span><i style="background:#f4f5fe;border:1.5px solid #c9cbf7"></i>Under 3 meals</span>
+          </div>
+        </div>
+        <div class="plot">
+          <div class="target" id="target2"><span id="targetLabel2"></span></div>
+          <div class="bars" id="bars2"></div>
+        </div>
+
+        <div class="xaxis" id="xaxis2"></div>
+
+        <div class="kband">
+          <div class="kplot">
+            <div class="ktarget" id="ktarget"><span>0.5+ in ketosis</span></div>
+            <div class="kbars" id="ketoStrip"></div>
+          </div>
+        </div>
+
+        <div class="key">
+          <div class="key-row">
+            <span><i style="background:#eef4fb;border:1.5px solid #9cc7ee"></i>0.0–0.2 carb-fueled</span>
+            <span><i style="background:#dff0e6;border:1.5px solid #8ecfa6"></i>0.3–0.4 mixed</span>
+            <span><i style="background:#2fa079"></i>0.5+ fat-fueled</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="s2">
+      <h1 class="up d1" id="weightTitle"></h1>
+      <p class="sub up d2" id="weightSub"></p>
+      <div class="tiles up d3" id="tiles"></div>
+      <div class="chart up d4 trend" id="trend"></div>
+    </section>
+
+    <section class="slide" id="s7">
+      <h1 class="up d1" id="dualTitle"></h1>
+      <p class="sub up d2" id="dualSub"></p>
+      <div class="dual up d3" id="dualChart"></div>
+      <div class="legend-dual up d4">
+        <span><i style="background:#f0ab2e"></i>Weight</span>
+        <span><i style="background:#eef4fb;border:1.5px solid #9cc7ee"></i>Carb-fueled (0.0–0.2)</span>
+        <span><i style="background:#dff0e6;border:1.5px solid #8ecfa6"></i>Mixed (0.3–0.4)</span>
+        <span><i style="background:#2fa079"></i>Fat-fueled (0.5+)</span>
+      </div>
+    </section>
+
+    <section class="slide" id="s4">
+      <div class="vcard up d1">
+        <h1>How logging ketones can help</h1>
+        <p class="sub">Drag your meals to see what follows.</p>
+
+        <div class="sliders" id="sliders">
+          <div class="sl-col">
+            <span class="sl-title">Meals</span>
+            <span class="sl-cap">More carbs</span>
+            <div class="sl-track narrow" id="mealTrack">
+              <div class="sl-thumb sl-thumb-lg" id="mealThumb" role="slider" tabindex="0"
+                   aria-label="Your meals, high to low carb" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div>
+            </div>
+            <span class="sl-cap">Fewer carbs</span>
+          </div>
+
+          <div class="sl-col">
+            <span class="sl-title">Ketones</span>
+            <span class="sl-cap">High</span>
+            <div class="sl-track zoned">
+              <div class="zone z1" data-zone="2"><span>Burning fat</span></div>
+              <div class="zone z2" data-zone="1"><span>Mixed</span></div>
+              <div class="zone z3" data-zone="0"><span>Burning carbs</span></div>
+              <div class="sl-thumb sl-thumb-sm" id="ketThumb"></div>
+            </div>
+            <span class="sl-cap">Low</span>
+          </div>
+
+          <div class="sl-col">
+            <span class="sl-title">Weight loss</span>
+            <span class="sl-cap" id="capFast">Faster</span>
+            <div class="sl-track narrow">
+              <div class="sl-thumb sl-thumb-sm" id="wtThumb"></div>
+            </div>
+            <span class="sl-cap" id="capSlow">Slower</span>
+          </div>
+        </div>
+
+        <div class="insight" id="insight">
+          <span class="ico" id="insightIco"></span>
+          <div class="ins-copy">
+            <b id="insightHead"></b>
+            <p id="insightTxt"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="s6">
+      <button class="edge edge-l" data-nav="prev" aria-label="Previous screen"></button>
+      <button class="edge edge-r" data-nav="next" aria-label="Next screen"></button>
+      <div class="s6-scroll" id="s6scroll">
+        <p class="sum-eyebrow up d1" id="sumWeek"></p>
+        <div class="up d2" id="sumHead"></div>
+        <div class="goal-card up d3" id="sumGoal"></div>
+        <div class="goal-card up d3" id="sumKeto" style="margin-top:11px"></div>
+        <div class="up d5" id="sumBonus"></div>
+      </div>
+      <div class="s6-cta"><div class="sum-btns" id="sumBtns"></div></div>
+    </section>
+  </div>
+
+  <div class="rscrim" id="rscrim"></div>
+  <div class="rsheet" id="rsheet" role="dialog" aria-label="Meal ideas">
+    <div class="grabber"></div>
+    <button class="rsheet-close" id="rsheetClose" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 17 17" fill="none" stroke="#0c1422" stroke-width="1.7" stroke-linecap="round"><path d="M1 1l15 15M16 1L1 16"/></svg>
+    </button>
+    <h2 id="rsheetTitle"></h2>
+    <p class="sub" id="rsheetSub"></p>
+    <div class="cards" id="sumCards"></div>
+  </div>
+
+  <div class="recipe" id="recipe" role="dialog" aria-label="Recipe details">
+    <div class="rc-head">
+      <button class="rc-icon" id="rcBack" aria-label="Back to suggestions">
+        <svg width="19" height="19" viewBox="0 0 19 19" fill="none" stroke="#0c1422" stroke-width="1.8"><path d="M12 4l-6 5.5 6 5.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="rc-icon" id="rcMark" aria-label="Bookmark recipe"></button>
+    </div>
+    <div class="rc-body">
+      <div class="rc-hero" id="rcHero"></div>
+      <h2 class="rc-title" id="rcName"></h2>
+      <div class="rc-stats stats" id="rcStats"></div>
+      <p class="rc-why" id="rcWhy"></p>
+      <h4>Ingredients</h4>
+      <ul id="rcIng"></ul>
+      <h4>Make it</h4>
+      <ol id="rcSteps"></ol>
+      <h4>Meal suggestions</h4>
+      <ul class="rc-pairs" id="rcPairs"></ul>
+    </div>
+    <div class="rc-cta">
+      <button class="btn btn-primary" id="rcSave">Bookmark this recipe</button>
+    </div>
+  </div>
+
+  <div class="recipe" id="coach" role="dialog" aria-label="Set another goal">
+    <div class="rc-head">
+      <button class="rc-icon" id="coachBack" aria-label="Back to suggestions">
+        <svg width="19" height="19" viewBox="0 0 19 19" fill="none" stroke="#0c1422" stroke-width="1.8"><path d="M12 4l-6 5.5 6 5.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="coach-body">
+      <div class="coach-badge">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#0052cc" stroke-width="1.7" stroke-linejoin="round">
+          <path d="M4 8.5A3.5 3.5 0 017.5 5h15A3.5 3.5 0 0126 8.5v8A3.5 3.5 0 0122.5 20H13l-6 5v-5h-.5A2.5 2.5 0 014 17.5v-9z"/>
+          <path d="M10.5 12.5h9" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2>Work with your health coach to set another goal</h2>
+      <p>Your coach can help you choose a different focus for next week and adjust your plan around it.</p>
+      <span class="coach-note" id="coachNote"></span>
+    </div>
+    <div class="rc-cta">
+      <button class="btn btn-primary" id="coachChat">Message your coach</button>
+    </div>
+  </div>
+
+  <div class="replay" id="replay"><button id="replayBtn">Watch again</button></div>
+  <div class="homebar"></div>
+</div>
+
+<script>
+const DATA = {
+  "patternsTitle": "Most of your carbs came from breakfast",
+  "week": "July 31 - Aug 6 2026",
+  "showExplainer": false,
+  "goal": "Swap sweet breakfast bowls for fat-based ones",
+  "ketoneAsk": null,
+  "target": 60,
+  "summaryTitle": "Next week, focus on breakfast",
+  "carbsTitle": "Two of your four logged days came in over your 60g target.",
+  "carbsSub": "Your ketone readings sit underneath each day, so you can see what the food did.",
+  "pairTitle": "Your lower-carb days lifted your ketones.",
+  "pairSub": "The two days under 40g reached 0.3. The two over 60g dropped back to 0.1.",
+  "headline": "Plateaus happen in the first month, and your readings show your body responding. {Swapping the sweet breakfast bowls} should be enough to push them higher.",
+  "actionTitle": "Next week, focus on breakfast!",
+  "actionSub": "Try a Virta-friendly alternative to those smoothies and granola bowls",
+  "weightTitle": "Your weight held steady this week.",
+  "weightSub": "You lost weight over your first two weeks, then it flattened. Sweet breakfasts kept your body burning carbs instead of fat.",
+  "weight": {
+    "labels": [
+      216,
+      214,
+      212,
+      210
+    ],
+    "series": [
+      215.4,
+      214.8,
+      214.1,
+      213.4,
+      212.8,
+      212.5,
+      212.7,
+      212.5,
+      212.6,
+      212.4
+    ],
+    "dates": [
+      "7/17",
+      "7/20",
+      "7/24",
+      "7/27",
+      "7/31",
+      "8/3",
+      "8/6"
+    ],
+    "avg": 213,
+    "since": -5
+  },
+  "carbs": [
+    {
+      "label": "7/31",
+      "v": 34,
+      "logs": 3
+    },
+    {
+      "label": "8/1",
+      "v": 0
+    },
+    {
+      "label": "8/2",
+      "v": 71,
+      "logs": 2
+    },
+    {
+      "label": "8/3",
+      "v": 0
+    },
+    {
+      "label": "8/4",
+      "v": 38,
+      "logs": 3
+    },
+    {
+      "label": "8/5",
+      "v": 0
+    },
+    {
+      "label": "8/6",
+      "v": 66,
+      "logs": 2
+    }
+  ],
+  "ketoneDays": [
+    {
+      "label": "7/31",
+      "v": 0.3
+    },
+    {
+      "label": "8/1",
+      "v": null
+    },
+    {
+      "label": "8/2",
+      "v": 0.1
+    },
+    {
+      "label": "8/3",
+      "v": null
+    },
+    {
+      "label": "8/4",
+      "v": 0.3
+    },
+    {
+      "label": "8/5",
+      "v": null
+    },
+    {
+      "label": "8/6",
+      "v": 0.1
+    }
+  ],
+  "dual": {
+    "title": "Your ketones never reached 0.5, so your weight stopped moving.",
+    "sub": "Ketosis starts at 0.5. Your best days reached 0.3, so your body kept burning carbs and the scale followed.",
+    "wLabels": [
+      216,
+      214,
+      212,
+      210,
+      208
+    ],
+    "wSeries": [
+      213.0,
+      212.9,
+      212.7,
+      212.6,
+      212.6,
+      212.5,
+      212.4
+    ],
+    "kLabels": [
+      "0.8",
+      "0.6",
+      "0.4",
+      "0.2",
+      "0.0"
+    ],
+    "kMax": 0.8,
+    "ketosis": 0.5
+  },
+  "ketones": {
+    "carbs": 71,
+    "value": "0.2"
+  },
+  "patterns": [
+    {
+      "g": 42,
+      "name": "Fruit smoothie, large"
+    },
+    {
+      "g": 31,
+      "name": "Granola parfait"
+    },
+    {
+      "g": 22,
+      "name": "Flavored yogurt cup"
+    }
+  ],
+  "swaps": [
+    {
+      "name": "Berry Chia Cream Pudding",
+      "time": "10m",
+      "carbs": "5g",
+      "protein": "8g",
+      "art": "chocolate",
+      "recipe": {
+        "why": "Chia in cream sets overnight into something that eats like a yogurt bowl, at about 5g of carbs instead of thirty.",
+        "ingredients": [
+          "3 tbsp chia seeds",
+          "3/4 cup heavy cream or coconut milk",
+          "1/4 cup raspberries",
+          "1/2 tsp vanilla",
+          "Monk fruit to taste"
+        ],
+        "steps": [
+          "Whisk chia, cream, vanilla and sweetener in a jar.",
+          "Refrigerate at least 4 hours, or overnight, until fully set.",
+          "Top with raspberries just before eating."
+        ],
+        "pairs": [
+          "Make two jars Sunday night and eat them Monday and Tuesday",
+          "Take it in place of the smoothie or parfait",
+          "Add a spoon of nut butter for a heavier breakfast"
+        ]
+      }
+    },
+    {
+      "name": "Yogurt and Walnut Bowl",
+      "time": "5m",
+      "carbs": "7g",
+      "protein": "12g",
+      "art": "nuts",
+      "recipe": {
+        "why": "Plain full-fat yogurt with walnuts keeps the bowl format you like while dropping the granola and honey that carried most of the carbs.",
+        "ingredients": [
+          "3/4 cup plain full-fat Greek yogurt",
+          "1 oz walnuts, chopped",
+          "1/4 cup blackberries",
+          "1/2 tsp cinnamon",
+          "Monk fruit to taste"
+        ],
+        "steps": [
+          "Stir cinnamon and sweetener through the yogurt.",
+          "Top with walnuts and berries.",
+          "Eat right away, or pack the nuts separately so they stay crisp."
+        ],
+        "pairs": [
+          "Swap in wherever the granola parfait would go",
+          "Check the label \u2014 plain, not vanilla or fruit-on-the-bottom",
+          "Keep berries to a quarter cup to hold the carbs down"
+        ]
+      }
+    },
+    {
+      "name": "Green Protein Smoothie",
+      "time": "5m",
+      "carbs": "6g",
+      "protein": "24g",
+      "art": "greens",
+      "recipe": {
+        "why": "Spinach, avocado and cream give you a cold blended breakfast at roughly 6g of carbs, where a fruit smoothie runs forty or more.",
+        "ingredients": [
+          "1 cup spinach",
+          "1/2 avocado",
+          "3/4 cup unsweetened almond milk",
+          "1 scoop unsweetened protein powder",
+          "Ice, and monk fruit to taste"
+        ],
+        "steps": [
+          "Blend the almond milk and spinach first until no flecks remain.",
+          "Add avocado, protein and sweetener and blend until thick.",
+          "Add ice and blend once more to bring the temperature down."
+        ],
+        "pairs": [
+          "Use this in place of the fruit smoothie",
+          "Freeze the avocado halves so you skip the ice",
+          "Leave out banana and mango entirely \u2014 that is where the carbs were"
+        ]
+      }
+    }
+  ],
+  "swapsAlt": [
+    {
+      "name": "Hard-Boiled Eggs",
+      "time": "12m",
+      "carbs": "1g",
+      "protein": "12g",
+      "art": "eggs",
+      "recipe": {
+        "why": "An egg has under a gram of carbs and the protein and fat to actually end a snack craving.",
+        "ingredients": [
+          "6 large eggs",
+          "Flaky salt",
+          "Cracked pepper",
+          "Optional: hot sauce or mayo"
+        ],
+        "steps": [
+          "Lower eggs into already-boiling water and cook 10 minutes.",
+          "Move straight to ice water for 5 minutes so they peel cleanly.",
+          "Store peeled in the fridge so they are ready to grab."
+        ],
+        "pairs": [
+          "Keep two peeled for the afternoon snack slot",
+          "Add to a kale salad to make it a meal",
+          "Eat with olives and cheese as a light dinner"
+        ]
+      }
+    },
+    {
+      "name": "Espresso with Cream",
+      "time": "2m",
+      "carbs": "1g",
+      "protein": "1g",
+      "art": "coffee",
+      "recipe": {
+        "why": "The shortest possible swap \u2014 two shots and a splash of cream, about a gram of carbs, ready in a minute.",
+        "ingredients": [
+          "2 shots espresso",
+          "2 tbsp heavy cream",
+          "Optional: cinnamon"
+        ],
+        "steps": [
+          "Pull the espresso into a small cup.",
+          "Add the cream and stir once.",
+          "Dust with cinnamon if you want the sweetness cue."
+        ],
+        "pairs": [
+          "Order this at any coffee shop, no custom build needed",
+          "Use it as the default when you're in a rush",
+          "Follow with water to keep your electrolytes up"
+        ]
+      }
+    },
+    {
+      "name": "Salted Macadamias",
+      "time": "5m",
+      "carbs": "4g",
+      "protein": "4g",
+      "art": "nuts",
+      "recipe": {
+        "why": "Macadamias are the lowest-carb nut and the highest in fat, so a small handful settles a snack urge for hours.",
+        "ingredients": [
+          "1 oz raw macadamias (about 10)",
+          "1/2 tsp avocado oil",
+          "Flaky salt"
+        ],
+        "steps": [
+          "Toss nuts with oil in a dry skillet over medium heat.",
+          "Toast 3-4 minutes, shaking often, until fragrant and lightly golden.",
+          "Salt while warm and portion into a small container."
+        ],
+        "pairs": [
+          "Keep a 1 oz bag in the car for drive-through moments",
+          "Pair with black coffee as an afternoon snack",
+          "Add to a cheese plate for a no-cook dinner"
+        ]
+      }
+    }
+  ]
+};
+
+/* ---------- illustration library ---------- */
+const ART = {
+  crisps:`<rect width="112" height="110" fill="#e8dccb"/><circle cx="56" cy="60" r="40" fill="#f5eee2"/><circle cx="56" cy="60" r="32" fill="#e7c98a"/><g fill="#d8ab5c"><circle cx="44" cy="52" r="7"/><circle cx="64" cy="49" r="6"/><circle cx="56" cy="66" r="8"/><circle cx="40" cy="68" r="5.5"/><circle cx="70" cy="64" r="6.5"/></g><path d="M0 0h112v22H0z" fill="#dccdb6" opacity=".7"/>`,
+  cheeseplate:`<rect width="112" height="110" fill="#ece4d6"/><g fill="#f0c14b"><path d="M18 62l22-14 20 12-20 14z"/><path d="M46 46l24-14 20 12-22 14z"/><path d="M30 82l24-14 22 13-24 14z"/></g><g fill="#d9a52f" opacity=".8"><circle cx="36" cy="58" r="2.6"/><circle cx="60" cy="44" r="2.4"/><circle cx="52" cy="80" r="2.6"/></g>`,
+  nuts:`<rect width="112" height="110" fill="#e6ddd0"/><ellipse cx="56" cy="62" rx="44" ry="34" fill="#f6f1e8"/><ellipse cx="56" cy="58" rx="36" ry="26" fill="#cfa46b"/><g fill="#b3854c"><ellipse cx="42" cy="50" rx="9" ry="7"/><ellipse cx="62" cy="46" rx="8" ry="6.5"/><ellipse cx="52" cy="62" rx="9.5" ry="7"/><ellipse cx="70" cy="60" rx="8" ry="6"/><ellipse cx="36" cy="64" rx="7" ry="5.5"/></g>`,
+  bars:`<rect width="112" height="110" fill="#efe6da"/><rect x="4" y="70" width="104" height="40" fill="#dccbb4"/><rect x="12" y="30" width="24" height="62" rx="4" fill="#c1543f"/><rect x="16" y="34" width="16" height="20" rx="2" fill="#e2775f"/><rect x="44" y="24" width="24" height="68" rx="4" fill="#8a4b2f"/><rect x="48" y="28" width="16" height="22" rx="2" fill="#a9663f"/><rect x="76" y="34" width="24" height="58" rx="4" fill="#c1543f"/><rect x="80" y="38" width="16" height="18" rx="2" fill="#e2775f"/>`,
+  chicken:`<rect width="112" height="110" fill="#e7ded1"/><ellipse cx="56" cy="64" rx="42" ry="30" fill="#f7f3ec"/><path d="M32 62c0-14 11-24 24-24s24 10 24 22c0 12-10 18-24 18s-24-6-24-16z" fill="#b9793c"/><path d="M40 54c6-8 16-11 26-8" stroke="#d69a58" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M74 74l14 10" stroke="#e4dccd" stroke-width="6" stroke-linecap="round"/><g fill="#3f7a4e"><circle cx="34" cy="80" r="5"/><circle cx="44" cy="84" r="4"/></g>`,
+  beefbowl:`<rect width="112" height="110" fill="#e4dcd2"/><path d="M14 54h84c0 26-19 40-42 40S14 80 14 54z" fill="#f4f0ea"/><path d="M20 56h72c0 20-15 30-36 30S20 76 20 56z" fill="#8a5433"/><g fill="#6c3f24"><circle cx="40" cy="64" r="6"/><circle cx="58" cy="70" r="6.5"/><circle cx="72" cy="62" r="5.5"/></g><path d="M34 58c8-4 20-4 30 2" stroke="#f0c14b" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+  eggs:`<rect width="112" height="110" fill="#e9e3d8"/><ellipse cx="56" cy="62" rx="42" ry="30" fill="#f8f5ef"/><g><ellipse cx="40" cy="58" rx="17" ry="14" fill="#fdfcf8"/><circle cx="40" cy="58" r="7" fill="#f2b544"/><ellipse cx="70" cy="70" rx="17" ry="14" fill="#fdfcf8"/><circle cx="70" cy="70" r="7" fill="#f2b544"/></g><g fill="#4a7a52"><circle cx="86" cy="46" r="4"/><circle cx="24" cy="80" r="4"/></g>`,
+  caulirice:`<rect width="112" height="110" fill="#e3ded4"/><path d="M14 52h84c0 27-19 42-42 42S14 79 14 52z" fill="#f6f3ed"/><g fill="#eae6dc"><circle cx="38" cy="62" r="6"/><circle cx="52" cy="70" r="6"/><circle cx="66" cy="62" r="6"/><circle cx="58" cy="56" r="5"/><circle cx="44" cy="76" r="5"/><circle cx="72" cy="74" r="5"/></g><g fill="#3f7a4e"><circle cx="30" cy="56" r="6"/><circle cx="80" cy="56" r="6"/><circle cx="56" cy="84" r="5"/></g>`,
+  rollups:`<rect width="112" height="110" fill="#ecdfd8"/><g><circle cx="38" cy="46" r="18" fill="#e8b5a4"/><circle cx="38" cy="46" r="11" fill="#f6efe6"/><circle cx="38" cy="46" r="5" fill="#c96a55"/><circle cx="72" cy="58" r="18" fill="#e8b5a4"/><circle cx="72" cy="58" r="11" fill="#f6efe6"/><circle cx="72" cy="58" r="5" fill="#c96a55"/><circle cx="48" cy="82" r="16" fill="#e8b5a4"/><circle cx="48" cy="82" r="10" fill="#f6efe6"/><circle cx="48" cy="82" r="4.5" fill="#c96a55"/></g>`,
+  lettucewrap:`<rect width="112" height="110" fill="#e4e6da"/><g fill="#6a9b57"><path d="M12 66c8-18 26-26 44-26s36 8 44 26c-14 12-28 18-44 18s-30-6-44-18z"/></g><path d="M26 64c8-10 20-14 30-14s22 4 30 14c-10 8-20 12-30 12s-22-4-30-12z" fill="#8fbd74"/><g fill="#8a5433"><ellipse cx="44" cy="62" rx="9" ry="5"/><ellipse cx="64" cy="66" rx="9" ry="5"/></g><g fill="#c74b3c"><circle cx="54" cy="56" r="3.4"/><circle cx="72" cy="58" r="3"/></g>`,
+  chocolate:`<rect width="112" height="110" fill="#e6ded6"/><rect x="22" y="30" width="30" height="30" rx="5" fill="#4a2f22"/><rect x="58" y="38" width="30" height="30" rx="5" fill="#3b2419"/><rect x="34" y="66" width="30" height="30" rx="5" fill="#4a2f22"/><g fill="#c9a97e"><circle cx="37" cy="45" r="3.4"/><circle cx="73" cy="53" r="3.4"/><circle cx="49" cy="81" r="3.4"/></g>`,
+  steakbowl:`<rect width="112" height="110" fill="#e5ddd3"/><path d="M12 52h88c0 27-20 42-44 42S12 79 12 52z" fill="#f5f1eb"/><g fill="#7d4630"><rect x="30" y="56" width="34" height="9" rx="4"/><rect x="44" y="70" width="34" height="9" rx="4"/><rect x="34" y="82" width="30" height="9" rx="4"/></g><path d="M24 54c14-6 34-6 50 2" stroke="#f0c14b" stroke-width="6" fill="none" stroke-linecap="round"/>`,
+  coffee:`<rect width="112" height="110" fill="#e8e0d6"/><ellipse cx="56" cy="92" rx="34" ry="7" fill="#d8cec1"/><path d="M32 34h48v30c0 12-10 20-24 20s-24-8-24-20V34z" fill="#f7f3ec"/><path d="M36 38h40v25c0 10-8 16-20 16s-20-6-20-16V38z" fill="#6f4630"/><ellipse cx="56" cy="40" rx="20" ry="5" fill="#c8a888"/><path d="M80 44c9 0 13 5 13 11s-4 11-13 11" fill="none" stroke="#f7f3ec" stroke-width="6" stroke-linecap="round"/><path d="M48 20c0 4-4 6-4 10M60 18c0 4-4 6-4 10" stroke="#cdbfae" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+  icedcoffee:`<rect width="112" height="110" fill="#e5e2da"/><path d="M38 22h36l-4 74a6 6 0 01-6 5H48a6 6 0 01-6-5L38 22z" fill="#f8f6f1"/><path d="M41 40h30l-3.4 54a4 4 0 01-4 4H48.4a4 4 0 01-4-4L41 40z" fill="#8a5a3c"/><g fill="#ffffff" opacity=".55"><rect x="46" y="46" width="12" height="12" rx="3" transform="rotate(-12 52 52)"/><rect x="56" y="62" width="12" height="12" rx="3" transform="rotate(14 62 68)"/><rect x="46" y="76" width="11" height="11" rx="3" transform="rotate(-8 51 81)"/></g><rect x="52" y="8" width="5" height="26" rx="2.5" fill="#c96a55" transform="rotate(12 54 21)"/>`,
+  greens:`<rect width="112" height="110" fill="#e2e5da"/><ellipse cx="56" cy="62" rx="42" ry="30" fill="#f4f4ee"/><g fill="#4c8352"><circle cx="40" cy="54" r="12"/><circle cx="64" cy="50" r="10"/><circle cx="52" cy="70" r="12"/><circle cx="74" cy="68" r="9"/></g><g fill="#6ba871"><circle cx="44" cy="52" r="5"/><circle cx="56" cy="68" r="5"/></g>`
+};
+const BOOKMARK = (on, size=11) => on
+  ? `<svg width="${size}" height="${size*13/11}" viewBox="0 0 11 13"><path d="M1.5 1.5h8v10L5.5 8.6 1.5 11.5v-10z" fill="#0052cc"/></svg>`
+  : `<svg width="${size}" height="${size*13/11}" viewBox="0 0 11 13" fill="none" stroke="#0c1422" stroke-width="1.5"><path d="M1.5 1.5h8v10L5.5 8.6 1.5 11.5v-10z" stroke-linejoin="round"/></svg>`;
+const PLATE = `<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#8f93ea" stroke-width="1.5"><circle cx="7.5" cy="7.5" r="6"/><circle cx="7.5" cy="7.5" r="2.4"/></svg>`;
+const AVATAR_SRC = 'data:image/jpeg;base64,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';
+const AVATAR = (s)=>`<img src="${AVATAR_SRC}" alt="" width="${s}" height="${s}" style="width:100%;height:100%;object-fit:cover;display:block">`;
+
+/* ---------- render ---------- */
+document.getElementById('avatarSlot').innerHTML = AVATAR(46);
+document.getElementById('week').textContent = DATA.week;
+document.getElementById('headline').innerHTML =
+  DATA.headline.replace('{', '<em>').replace('}', '</em>');
+document.getElementById('carbsTitle').textContent = DATA.carbsTitle;
+document.getElementById('carbsSub').textContent = DATA.carbsSub;
+document.getElementById('patternsTitle').textContent = DATA.patternsTitle || 'Top carb patterns';
+
+document.getElementById('weightTitle').textContent = DATA.weightTitle || 'How this affects your weight';
+document.getElementById('weightSub').textContent = DATA.weightSub ||
+  'Day-to-day changes are normal. Look at your overall trend  to see your progress over time.';
+const reassureEl = document.getElementById('reassure');
+DATA.reassure ? reassureEl.textContent = DATA.reassure : reassureEl.remove();
+document.getElementById('scrollCue').textContent = DATA.scrollCue || 'Scroll for your swaps';
+document.getElementById('learnWhy').textContent = DATA.ctaLabel || 'See your numbers';
+document.getElementById('actTitle').textContent = DATA.actionTitle;
+document.getElementById('actSub').textContent = DATA.actionSub;
+
+
+const BOLT_ASK = `<svg width="18" height="20" viewBox="0 0 18 20" fill="none" stroke="#2fa079" stroke-width="1.8" stroke-linejoin="round"><path d="M10.4 1L3 10.6h4.2l-.7 8.4L15 8.6h-4.6L10.4 1z"/></svg>`;
+
+const ART3 = {
+  plate:`<svg width="52" height="46" viewBox="0 0 52 46" fill="none">
+    <ellipse cx="26" cy="34" rx="19" ry="7.5" fill="#f2ede4"/>
+    <path d="M12 30c0-4.4 5.6-7.5 13-7.5S38 25.6 38 30c0 3.6-5.6 5.5-13 5.5S12 33.6 12 30z" fill="#8a4b2c"/>
+    <path d="M17 28c4-1.8 12-1.8 17 .4" stroke="#a35d38" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="33.5" cy="30.5" r="5" fill="#f6efdd"/><circle cx="33.5" cy="30.5" r="2.4" fill="#efc14e"/>
+    <g fill="#3f7a4e"><circle cx="17" cy="16" r="4.6"/><circle cx="21.6" cy="13" r="3.6"/><circle cx="13.2" cy="13.4" r="3.4"/></g>
+    <path d="M17 20.5v5" stroke="#4f8a5c" stroke-width="2.2" stroke-linecap="round"/>
+    <g stroke="#5b9c68" stroke-width="2.2" stroke-linecap="round"><path d="M26 9v13"/><path d="M30.5 11.5V22"/></g>
+    <g fill="#5b9c68"><circle cx="26" cy="8" r="2"/><circle cx="30.5" cy="10.5" r="1.8"/></g>
+  </svg>`,
+  drop:`<svg width="46" height="50" viewBox="0 0 46 50" fill="none">
+    <path d="M23 2c7 9.5 15 17.6 15 26.5A15 15 0 0 1 8 28.5C8 19.6 16 11.5 23 2z" fill="#5fae94"/>
+    <text x="23" y="33" font-family="Figtree, sans-serif" font-size="13" font-weight="700" fill="#0f3a2c" text-anchor="middle">0.5</text>
+  </svg>`,
+  flame:`<svg width="52" height="46" viewBox="0 0 52 46" fill="none">
+    <g fill="#f7e7b8"><circle cx="30" cy="32" r="7"/><circle cx="40" cy="30" r="6"/><circle cx="35" cy="38" r="5.5"/></g>
+    <path d="M22 4c5 6 8.5 10.5 8.5 16.5A8.5 8.5 0 0 1 14 21c0-4 3-6.5 3-10 0 3 5 3 5-7z" fill="#e79a3c"/>
+    <path d="M21 11c2.6 3.4 4.4 5.8 4.4 9a4.4 4.4 0 0 1-8.6 1.3c0-2 1.5-3.4 1.5-5.2 0 1.6 2.7 1.6 2.7-5.1z" fill="#f6c274"/>
+  </svg>`,
+  arrow:`<svg width="20" height="10" viewBox="0 0 20 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 5h16M13.5 1.5L17.5 5l-4 3.5"/></svg>`
+};
+
+const LOCK_ICON = `<svg width="14" height="16" viewBox="0 0 14 16" fill="none" stroke="#0c1422" stroke-width="1.7" stroke-linejoin="round"><path d="M2.2 6.6h9.6v8H2.2z"/><path d="M4.6 6.6V4.4a2.4 2.4 0 0 1 4.8 0v2.2"/></svg>`;
+
+const LOG_ICONS = {
+  describe:`<svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="#0052cc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11.6 1.9l3.5 3.5-8.6 8.6-4.2.7.7-4.2 8.6-8.6z"/></svg>`,
+  camera:`<svg width="18" height="17" viewBox="0 0 18 17" fill="none" stroke="#0052cc" stroke-width="1.6" stroke-linejoin="round"><path d="M1.6 5.6h2.7l1.3-2.2h5.8l1.3 2.2h2.7v9H1.6v-9z"/><circle cx="9" cy="9.8" r="2.9"/></svg>`,
+  label:`<svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="#0052cc" stroke-width="1.6" stroke-linejoin="round"><path d="M3 2.2h10v13.6H3z"/><path d="M5.6 6h4.8M5.6 9h4.8M5.6 12h3" stroke-linecap="round"/></svg>`,
+  photos:`<svg width="18" height="17" viewBox="0 0 18 17" fill="none" stroke="#0052cc" stroke-width="1.6" stroke-linejoin="round"><path d="M2 3.4h14v10.2H2z"/><path d="M2 11l4-3.4 3.4 2.8 2.6-2.2 4 3.4"/><circle cx="6" cy="6.4" r="1.2"/></svg>`
+};
+const BULB = `<svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="#2fa079" stroke-width="1.6" stroke-linejoin="round"><path d="M8 1.5a5 5 0 0 1 3 9v2H5v-2a5 5 0 0 1 3-9z"/><path d="M6.2 15.4h3.6" stroke-linecap="round"/></svg>`;
+const LOCK = `<svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="#0052cc" stroke-width="1.6" stroke-linejoin="round"><path d="M2.6 7.6h10.8v8.8H2.6z"/><path d="M5.4 7.6V5.2a2.6 2.6 0 0 1 5.2 0v2.4"/></svg>`;
+
+function renderWins(){
+  const W = DATA.wins;
+  document.getElementById('actSteps').innerHTML = `
+    <div class="wins-row">
+      ${W.tiles.map(x=>`<div class="win-tile"><b>${x.value}</b><span>${x.label}</span></div>`).join('')}
+    </div>
+    <div class="keep-note">${ART3.flame}<p>${W.note}</p></div>`;
+}
+
+function renderLoggingBlock(){
+  const L = DATA.logging;
+  document.getElementById('actSteps').innerHTML = `
+    <div class="log-methods">
+      ${L.methods.map(m=>`<div class="log-method"><span class="ic">${LOG_ICONS[m.icon]}</span><p>${m.label}</p></div>`).join('')}
+    </div>
+    <p class="log-time">${L.time}</p>
+
+    <div class="friction">
+      <h4>${L.friction.question}</h4>
+      <div class="chips-row">
+        ${L.friction.options.map((o,i)=>`<button class="fchip" data-i="${i}" aria-pressed="false">${o.label}</button>`).join('')}
+      </div>
+      <div class="ftip" id="ftip">${BULB}<p id="ftipText"></p></div>
+    </div>
+
+    <div class="unlock">${LOCK}<p>${L.unlock}</p></div>`;
+
+  const tip = document.getElementById('ftip'), tipText = document.getElementById('ftipText');
+  document.querySelectorAll('.fchip').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.stopPropagation();
+      document.querySelectorAll('.fchip').forEach(b=>b.setAttribute('aria-pressed','false'));
+      btn.setAttribute('aria-pressed','true');
+      tipText.innerHTML = L.friction.options[+btn.dataset.i].tip;
+      tip.classList.add('on');
+    });
+  });
+}
+
+const STEPS3_HTML = `
+  <div class="steps3" style="margin-top:22px">
+    <div class="step3"><span class="ic">${ART3.plate}</span><p>Log your meals</p></div>
+    <span class="arrow3">${ART3.arrow}</span>
+    <div class="step3"><span class="ic">${ART3.drop}</span><p>Check ketones<br>2h later</p></div>
+    <span class="arrow3">${ART3.arrow}</span>
+    <div class="step3"><span class="ic">${ART3.flame}</span><p>See what<br>moved them</p></div>
+  </div>`;
+
+/* ---------- shared chart scrubbing ---------- */
+function attachScrub(host, cols, tip, guide, content){
+  if(!host || !tip || !cols.length) return;     // nothing to scrub into
+  function show(i){
+    const hr = host.getBoundingClientRect(), cr = cols[i].getBoundingClientRect();
+    tip.innerHTML = content(i);
+    tip.style.left = ((cr.left + cr.width/2 - hr.left) / hr.width * 100) + '%';
+    tip.style.top  = ((cr.top - hr.top) / hr.height * 100) + '%';
+    tip.classList.add('on');
+    if(guide){
+      guide.style.left = ((cr.left + cr.width/2 - hr.left) / hr.width * 100) + '%';
+      guide.style.opacity = '1';
+    }
+    cols.forEach((c,n)=> c.classList.toggle('scrubbed', n===i));
+  }
+  function hide(){
+    tip.classList.remove('on');
+    if(guide) guide.style.opacity = '0';
+    cols.forEach(c=>c.classList.remove('scrubbed'));
+  }
+  function nearest(clientX){
+    let best = 0, bd = Infinity;
+    cols.forEach((c,i)=>{
+      const r = c.getBoundingClientRect(), d = Math.abs(r.left + r.width/2 - clientX);
+      if(d < bd){ bd = d; best = i; }
+    });
+    return best;
+  }
+  ['pointerdown','pointermove'].forEach(ev =>
+    host.addEventListener(ev, e=>{ e.stopPropagation(); show(nearest(e.clientX)); }));
+  ['pointerup','pointerleave','pointercancel'].forEach(ev =>
+    host.addEventListener(ev, e=>{ e.stopPropagation(); if(ev !== 'pointerup') hide(); }));
+}
+
+/* weight chart */
+(function(){
+  const w = DATA.weight, L = w.labels;
+  const top = 10, bottom = 145, x0 = 42, x1 = 306;
+  // sample the series onto the labelled days so every dot has a date
+  const n = w.dates.length;
+  const series = w.series.length === n ? w.series : Array.from({length:n}, (_,i)=>{
+    const pos = i * (w.series.length - 1) / (n - 1), lo = Math.floor(pos), hi = Math.ceil(pos);
+    return w.series[lo] + (w.series[hi] - w.series[lo]) * (pos - lo);
+  });
+  const yFor = v => top + (L[0]-v) * (bottom-top) / (L[0]-L[L.length-1]);
+  const xFor = i => x0 + i*(x1-x0)/(n-1);
+  const pts = series.map((v,i)=>[xFor(i), yFor(v)]);
+
+  let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+  for(let i=0;i<pts.length-1;i++){
+    const p0=pts[i-1]||pts[i], p1=pts[i], p2=pts[i+1], p3=pts[i+2]||p2;
+    d += ` C${(p1[0]+(p2[0]-p0[0])/6).toFixed(1)},${(p1[1]+(p2[1]-p0[1])/6).toFixed(1)}`
+      +  ` ${(p2[0]-(p3[0]-p1[0])/6).toFixed(1)},${(p2[1]-(p3[1]-p1[1])/6).toFixed(1)}`
+      +  ` ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+  }
+  const gridY = L.map((v,i)=> top + i*(bottom-top)/(L.length-1));
+
+  document.getElementById('trend').innerHTML = `
+    <svg viewBox="0 0 330 190" width="100%" height="190" aria-label="Weight trend">
+      <g font-family="Figtree, sans-serif" font-size="11" fill="#4a5568">
+        ${L.map((v,i)=>`<text x="0" y="${(gridY[i]+4).toFixed(0)}">${v}</text>`).join('')}
+      </g>
+      <g stroke="#eceef2" stroke-width="1">
+        ${gridY.map(y=>`<line x1="30" y1="${y.toFixed(0)}" x2="330" y2="${y.toFixed(0)}"/>`).join('')}
+      </g>
+      <line id="trendGuide" y1="8" y2="150" stroke="#c3cad6" stroke-width="1" stroke-dasharray="3 3" opacity="0"/>
+      <path class="line" d="${d}" fill="none" stroke="#f0ab2e" stroke-width="2.6" stroke-linecap="round"/>
+      <g id="trendDots">${series.map((v,i)=>
+        `<circle class="tdot" cx="${xFor(i).toFixed(1)}" cy="${yFor(v).toFixed(1)}" r="3.6" fill="#f0ab2e" stroke="#fff" stroke-width="1.8"/>`).join('')}</g>
+      <g font-family="Figtree, sans-serif" font-size="11.5" font-weight="600" fill="#0c1422" text-anchor="middle">
+        ${w.dates.map((t,i)=>`<text x="${xFor(i).toFixed(0)}" y="174">${t}</text>`).join('')}
+      </g>
+    </svg>
+    <div class="chart-tip" id="trendTip"></div>`;
+
+  const path = document.querySelector('#trend path.line');
+  const len = path.getTotalLength();
+  path.style.strokeDasharray = len;
+  path.style.strokeDashoffset = len;
+
+  document.getElementById('tiles').innerHTML = `
+    <div class="tile"><p>Weekly avg</p><b>${w.avg}</b><i>lbs</i></div>
+    <div class="tile"><p>Since start</p><b>${w.since}</b><i>lbs</i></div>`;
+
+  /* scrub the trend line */
+  const wrap = document.getElementById('trend');
+  const svgEl = wrap.querySelector('svg');
+  const tip = document.getElementById('trendTip');
+  const guide = document.getElementById('trendGuide');
+  const dots = [...wrap.querySelectorAll('.tdot')];
+  wrap.style.position = 'relative';
+
+  function show(i){
+    tip.innerHTML = `<b>${series[i].toFixed(1)} lbs</b><span>${w.dates[i]}</span>`;
+    tip.style.left = (xFor(i) / 330 * 100) + '%';
+    tip.style.top  = (yFor(series[i]) / 190 * 100) + '%';
+    tip.classList.add('on');
+    guide.setAttribute('x1', xFor(i).toFixed(1));
+    guide.setAttribute('x2', xFor(i).toFixed(1));
+    guide.setAttribute('opacity','1');
+    dots.forEach((c,k)=> c.setAttribute('r', k===i ? '6' : '3.6'));
+  }
+  function hide(){
+    tip.classList.remove('on');
+    guide.setAttribute('opacity','0');
+    dots.forEach(c=>c.setAttribute('r','3.6'));
+  }
+  function nearest(clientX){
+    const r = svgEl.getBoundingClientRect();
+    const x = (clientX - r.left) / r.width * 330;
+    let best = 0, bd = Infinity;
+    series.forEach((_,i)=>{ const dd = Math.abs(xFor(i) - x); if(dd < bd){ bd = dd; best = i; } });
+    return best;
+  }
+  ['pointerdown','pointermove'].forEach(ev =>
+    svgEl.addEventListener(ev, e=>{ e.stopPropagation(); show(nearest(e.clientX)); }));
+  ['pointerup','pointerleave','pointercancel'].forEach(ev =>
+    svgEl.addEventListener(ev, e=>{ e.stopPropagation(); if(ev !== 'pointerup') hide(); }));
+})();
+
+/* carb chart — drawn on the carbs screen, and again on the paired screen */
+function drawCarbs(ids){
+  const days = DATA.carbs, target = DATA.target;
+  const peak = Math.max(target, ...days.map(d=>d.v||0));
+  const scale = 122 / peak;
+  document.getElementById(ids.target).style.bottom = (target*scale) + 'px';
+  document.getElementById(ids.label).textContent = target + 'g carb target';
+  document.getElementById(ids.bars).innerHTML = days.map((d,i)=>{
+    if(!d.v) return '<div class="col"><span class="val" style="opacity:.35">—</span></div>';
+    return `<div class="col">
+      <span class="val">${d.v}</span>
+      <div class="bar ${d.logs>=3?'solid':'hollow'}" style="height:${(d.v*scale).toFixed(0)}px;transition-delay:${(0.1*i+0.15).toFixed(2)}s"></div>
+    </div>`;
+  }).join('');
+  document.getElementById(ids.axis).innerHTML = days.map(d=>`<span>${d.label}</span>`).join('');
+
+  // scrub for a day's numbers
+  const host = document.getElementById(ids.bars).closest('.carbs');
+  const cols = [...document.getElementById(ids.bars).children];
+  attachScrub(host, cols, host.querySelector('.chart-tip'), host.querySelector('.scrub-guide'), i=>{
+    const d = days[i];
+    if(!d.v) return `<b>Nothing logged</b><span>${d.label}</span>`;
+    const k = DATA.ketoneDays && ids.keto ? DATA.ketoneDays[i] : null;
+    const kLine = k ? (k.v == null ? '<br><span>no reading</span>' : `<br><em>${k.v.toFixed(1)}</em> <span>ketones</span>`) : '';
+    return `<b>${d.v}g carbs</b><span>${d.label} · ${d.logs} meal log${d.logs===1?'':'s'}</span>${kLine}`;
+  });
+}
+if(DATA.carbs){
+  drawCarbs({target:'target', label:'targetLabel', bars:'bars', axis:'xaxis'});
+} else {
+  document.getElementById('s3').remove();
+}
+
+/* the paired screen adds the readings under the same days */
+if(DATA.ketoneDays && DATA.carbs){
+  drawCarbs({target:'target2', label:'targetLabel2', bars:'bars2', axis:'xaxis2', keto:true});
+  document.getElementById('pairTitle').textContent = DATA.pairTitle;
+  document.getElementById('pairSub').textContent = DATA.pairSub;
+
+  const vals = DATA.ketoneDays.map(d=>d.v).filter(v=>v != null);
+  const kMax = Math.max(0.6, Math.max(...vals) * 1.18), band = 68, kScale = band / kMax;
+  document.getElementById('ktarget').style.top = (0.5*kScale) + 'px';
+  document.getElementById('ketoStrip').innerHTML = DATA.ketoneDays.map((d,i)=>{
+    if(d.v == null) return '<div class="kcol"><span class="kmiss">—</span></div>';
+    const h = Math.max(7, Math.round(d.v * kScale));
+    const zone = d.v >= 0.5 ? 'z-fat' : d.v >= 0.3 ? 'z-mixed' : 'z-carb';
+    return `<div class="kcol">
+      <div class="kbar ${zone}" style="height:${h}px;transition-delay:${(0.1*i+0.4).toFixed(2)}s"></div>
+      <span class="kval">${d.v.toFixed(1)}</span>
+    </div>`;
+  }).join('');
+} else {
+  document.getElementById('s8').remove();
+}
+
+
+/* locked preview — what the same week would look like with readings */
+if(DATA.lockedKetones){
+  const L = DATA.lockedKetones;
+  drawCarbs({target:'target3', label:'targetLabel3', bars:'bars3', axis:'xaxis3'});
+  document.getElementById('lockTitle').textContent = L.title;
+  document.getElementById('lockSub').textContent = L.sub;
+  document.getElementById('lockPill').innerHTML = LOCK_ICON + L.pill;
+
+  const kMax = 0.6, band = 68, kScale = band / kMax;
+  document.getElementById('ktarget3').style.top = (0.5 * kScale) + 'px';
+  document.getElementById('lockedBars').innerHTML = L.shape.map((v,i)=>{
+    if(v == null) return '<div class="kcol"><span class="kmiss">—</span></div>';
+    return `<div class="kcol">
+      <div class="kbar locked" style="height:${Math.round(v*kScale)}px;transition-delay:${(0.08*i+0.35).toFixed(2)}s"></div>
+      <span class="kval" style="opacity:1;color:#b9c0cd;font-weight:600">?</span>
+    </div>`;
+  }).join('');
+} else {
+  document.getElementById('s9').remove();
+}
+
+/* share of weekly carbs — only where food was logged */
+if(!DATA.patterns || !DATA.carbs){ document.getElementById('s5').remove(); }
+/* share of weekly carbs */
+const hasPatterns = !!(DATA.patterns && DATA.carbs);
+const RING_R = 88, RING_C = 2 * Math.PI * RING_R;
+const patternG = hasPatterns ? DATA.patterns.reduce((s,p)=>s+p.g, 0) : 0;
+const weekG = hasPatterns ? DATA.carbs.reduce((s,d)=>s+(d.v||0), 0) : 1;
+const sharePct = Math.round(patternG / weekG * 100);
+
+const ringArc = document.getElementById('ringArc');
+const ringPct = document.getElementById('ringPct');
+if(hasPatterns){
+ringArc.style.strokeDasharray = RING_C;
+ringArc.style.strokeDashoffset = RING_C;
+
+const patSub = document.getElementById('patternsSub');
+if(DATA.patternsSub === '') patSub.remove();
+else patSub.textContent = DATA.patternsSub ||
+  `Together, these three foods made up ${sharePct}% of the carbs you logged last week.`;
+document.getElementById('chips').innerHTML = DATA.patterns.map((p,i)=>`
+  <div class="chip up d${i+4}"><span>${p.name}</span><b>${p.g}g</b></div>`).join('');
+}
+
+let ringRun = 0;
+function ringPlay(){
+  if(!hasPatterns || !ringArc) return;
+  const run = ++ringRun;
+  ringArc.style.transition = 'none';
+  ringArc.style.strokeDashoffset = RING_C;
+  ringPct.textContent = '0%';
+  requestAnimationFrame(()=>{
+    if(run !== ringRun) return;
+    ringArc.style.transition = 'stroke-dashoffset 1.15s cubic-bezier(.2,.85,.25,1) .25s';
+    ringArc.style.strokeDashoffset = RING_C * (1 - sharePct/100);
+    const t0 = performance.now();
+    (function tick(now){
+      if(run !== ringRun) return;
+      const p = Math.min(1, Math.max(0, (now - t0 - 250) / 1150));
+      ringPct.textContent = Math.round(sharePct * (1 - Math.pow(1 - p, 3))) + '%';
+      if(p < 1) requestAnimationFrame(tick);
+    })(t0);
+  });
+}
+
+/* swap cards */
+const cardsEl = document.getElementById('cards');
+const ALL_SWAPS = [...DATA.swaps, ...DATA.swapsAlt];
+const saved = new Set();
+const findSwap = n => ALL_SWAPS.find(s => s.name === n);
+
+function renderCards(list, target){
+  const el = target || cardsEl;
+  el.innerHTML = list.map(s=>`
+  <article class="card" role="button" tabindex="0" data-name="${s.name}" aria-label="${s.name} recipe">
+    <div>
+      <h3>${s.name}</h3>
+      <div class="stats">
+        <div class="stat"><b>${s.time}</b><span>Total time</span></div>
+        <div class="stat"><b>${s.carbs}</b><span>Carbs</span></div>
+        <div class="stat"><b>${s.protein}</b><span>Protein</span></div>
+      </div>
+    </div>
+    <div class="thumb">
+      <svg viewBox="0 0 112 110" preserveAspectRatio="xMidYMid slice">${ART[s.art]}</svg>
+      <button class="mark" data-mark aria-label="Bookmark ${s.name}">${BOOKMARK(saved.has(s.name))}</button>
+    </div>
+  </article>`).join('');
+
+  el.querySelectorAll('.card').forEach(c=>{
+    const name = c.dataset.name;
+    c.addEventListener('click', e=>{ e.stopPropagation(); openRecipe(name); });
+    c.addEventListener('keydown', e=>{
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); e.stopPropagation(); openRecipe(name); }
+    });
+    c.querySelector('[data-mark]').addEventListener('click', e=>{
+      e.stopPropagation(); toggleSave(name);
+    });
+  });
+}
+
+function toggleSave(name){
+  saved.has(name) ? saved.delete(name) : saved.add(name);
+  repaintMarks();
+}
+function repaintMarks(){
+  document.querySelectorAll('.card').forEach(c=>{
+    c.querySelector('[data-mark]').innerHTML = BOOKMARK(saved.has(c.dataset.name));
+  });
+  if(openName){
+    document.getElementById('rcMark').innerHTML = BOOKMARK(saved.has(openName), 17);
+    const btn = document.getElementById('rcSave');
+    const on = saved.has(openName);
+    btn.textContent = on ? 'Bookmarked for next week' : 'Bookmark this recipe';
+    btn.classList.toggle('saved', on);
+  }
+}
+
+/* recipe detail */
+const recipeEl = document.getElementById('recipe');
+let openName = null;
+
+function openRecipe(name){
+  const s = findSwap(name);
+  if(!s) return;
+  openName = name;
+  document.getElementById('rcHero').innerHTML =
+    `<svg viewBox="0 0 112 110" preserveAspectRatio="xMidYMid slice">${ART[s.art]}</svg>`;
+  document.getElementById('rcName').textContent = s.name;
+  document.getElementById('rcStats').innerHTML = `
+    <div class="stat"><b>${s.time}</b><span>Total time</span></div>
+    <div class="stat"><b>${s.carbs}</b><span>Carbs</span></div>
+    <div class="stat"><b>${s.protein}</b><span>Protein</span></div>`;
+  document.getElementById('rcWhy').textContent = s.recipe.why;
+  document.getElementById('rcIng').innerHTML = s.recipe.ingredients.map(i=>`<li>${i}</li>`).join('');
+  document.getElementById('rcSteps').innerHTML = s.recipe.steps.map(i=>`<li>${i}</li>`).join('');
+  document.getElementById('rcPairs').innerHTML = s.recipe.pairs.map(i=>`<li>${PLATE}<span>${i}</span></li>`).join('');
+  document.getElementById('rcBody')?.scrollTo(0,0);
+  document.querySelector('.rc-body').scrollTop = 0;
+  repaintMarks();
+  recipeEl.classList.add('on');
+  phone.classList.add('recipe-open');
+}
+function closeRecipe(){
+  recipeEl.classList.remove('on');
+  phone.classList.remove('recipe-open');
+  setTimeout(()=>{ openName = null; }, 420);
+}
+
+if(DATA.swaps && DATA.swaps.length){
+  renderCards(DATA.swaps);
+} else if(DATA.wins || DATA.logging){
+  document.getElementById('cards').remove();
+  DATA.wins ? renderWins() : renderLoggingBlock();
+} else {
+  // nothing to reveal — the headline carries the screen on its own
+  document.getElementById('s1').classList.add('simple');
+  document.getElementById('actBlock').remove();
+  document.getElementById('scrollHint').remove();
+  document.querySelector('.s1-cta').classList.add('show');
+}
+
+
+
+const KZONE = v => v >= 0.5 ? {fill:'#2fa079', stroke:'#2fa079'}
+               : v >= 0.3 ? {fill:'#dff0e6', stroke:'#8ecfa6'}
+               : {fill:'#eef4fb', stroke:'#9cc7ee'};
+
+/* ---------- weight vs ketones ---------- */
+if(DATA.dual && DATA.ketoneDays){
+  const D = DATA.dual, L = D.wLabels;
+  const x0 = 40, x1 = 300, top = 30, bottom = 210;
+  const rows = L.length, gap = (bottom - top) / (rows - 1);
+  const gridY = L.map((_,i)=> top + i*gap);
+  const wY = v => top + (L[0] - v) * (bottom - top) / (L[0] - L[rows-1]);
+  const kY = v => bottom - (v / D.kMax) * (bottom - top);
+  const colX = i => x0 + i * (x1 - x0) / (DATA.ketoneDays.length - 1);
+
+  const pts = D.wSeries.map((v,i)=>[colX(i), wY(v)]);
+  let path = `M${pts[0][0]},${pts[0][1].toFixed(1)}`;
+  for(let i=0;i<pts.length-1;i++){
+    const p0=pts[i-1]||pts[i], p1=pts[i], p2=pts[i+1], p3=pts[i+2]||p2;
+    path += ` C${(p1[0]+(p2[0]-p0[0])/6).toFixed(1)},${(p1[1]+(p2[1]-p0[1])/6).toFixed(1)}`
+          + ` ${(p2[0]-(p3[0]-p1[0])/6).toFixed(1)},${(p2[1]-(p3[1]-p1[1])/6).toFixed(1)}`
+          + ` ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+  }
+
+  const bars = DATA.ketoneDays.map((d,i)=>{
+    if(d.v == null) return '';
+    const c = KZONE(d.v), y = kY(d.v), h = Math.max(5, bottom - y);
+    return `<rect class="dual-bar" x="${colX(i)-6}" y="${(bottom-h).toFixed(1)}" width="12" height="${h.toFixed(1)}"
+             rx="5" fill="${c.fill}" stroke="${c.stroke}" stroke-width="1.5"
+             style="transition-delay:${(0.1*i+0.5).toFixed(2)}s"/>`;
+  }).join('');
+
+  const ketoY = kY(D.ketosis);
+  document.getElementById('dualTitle').textContent = D.title;
+  document.getElementById('dualSub').textContent = D.sub;
+  document.getElementById('dualChart').innerHTML = `
+    <svg viewBox="0 0 330 250" width="100%" height="250" aria-label="Weight against ketone readings">
+      <g stroke="#eceef2" stroke-width="1">
+        ${gridY.map(y=>`<line x1="34" y1="${y}" x2="306" y2="${y}"/>`).join('')}
+      </g>
+      <g font-family="Figtree, sans-serif" font-size="10.5" fill="#4a5568">
+        ${L.map((v,i)=>`<text x="0" y="${(gridY[i]+4).toFixed(0)}">${v}</text>`).join('')}
+        ${D.kLabels.map((v,i)=>`<text x="310" y="${(gridY[i]+4).toFixed(0)}">${v}</text>`).join('')}
+      </g>
+      <line id="dualGuide" y1="26" y2="214" stroke="#c3cad6" stroke-width="1" stroke-dasharray="3 3" opacity="0"/>
+      ${bars}
+      <path id="dualLine" d="${path}" fill="none" stroke="#f0ab2e" stroke-width="2.6" stroke-linecap="round"/>
+      <g id="dualDots">${D.wSeries.map((v,i)=>
+        `<circle class="wdot" data-i="${i}" cx="${colX(i).toFixed(1)}" cy="${wY(v).toFixed(1)}" r="3.6" fill="#f0ab2e" stroke="#fff" stroke-width="1.8"/>`).join('')}</g>
+      <line x1="104" y1="${ketoY.toFixed(1)}" x2="306" y2="${ketoY.toFixed(1)}" stroke="#0c1422" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <g><rect x="30" y="${(ketoY-10).toFixed(1)}" width="76" height="20" rx="6" fill="#0c1422"/>
+        <text x="68" y="${(ketoY+4.5).toFixed(1)}" font-family="Figtree, sans-serif" font-size="11" font-weight="500" fill="#fff" text-anchor="middle">0.5+ in ketosis</text></g>
+      <g font-family="Figtree, sans-serif" font-size="11.5" font-weight="600" fill="#0c1422" text-anchor="middle">
+        ${DATA.ketoneDays.map((d,i)=>`<text x="${colX(i).toFixed(0)}" y="234">${d.label}</text>`).join('')}
+      </g>
+    </svg>
+    <div class="chart-tip" id="dualTip"></div>`;
+  const dl = document.querySelector('#dualLine');
+  const len = dl.getTotalLength();
+  dl.style.strokeDasharray = len; dl.style.strokeDashoffset = len;
+
+  /* scrub for a day's numbers, the way Apple Health and Oura do it */
+  const wrap = document.getElementById('dualChart');
+  const svgEl = wrap.querySelector('svg');
+  const tip = document.getElementById('dualTip');
+  const guide = document.getElementById('dualGuide');
+  const dots = [...wrap.querySelectorAll('.wdot')];
+
+  function showAt(i){
+    const day = DATA.ketoneDays[i], w = D.wSeries[i];
+    const reading = day.v == null
+      ? '<span>no reading</span>'
+      : `<em>${day.v.toFixed(1)}</em> <span>ketones</span>`;
+    tip.innerHTML = `<b>${w.toFixed(1)} lbs</b><span>${day.label} · </span>${reading}`;
+    tip.style.left = (colX(i) / 330 * 100) + '%';
+    tip.style.top  = (wY(w) / 250 * 100) + '%';
+    tip.classList.add('on');
+    guide.setAttribute('x1', colX(i).toFixed(1));
+    guide.setAttribute('x2', colX(i).toFixed(1));
+    guide.setAttribute('opacity', '1');
+    dots.forEach((c,n)=> c.setAttribute('r', n===i ? '6' : '3.6'));
+  }
+  function hide(){
+    tip.classList.remove('on');
+    guide.setAttribute('opacity','0');
+    dots.forEach(c=>c.setAttribute('r','3.6'));
+  }
+  function nearest(clientX){
+    const r = svgEl.getBoundingClientRect();
+    const x = (clientX - r.left) / r.width * 330;
+    let best = 0, bd = Infinity;
+    DATA.ketoneDays.forEach((_,i)=>{ const d = Math.abs(colX(i) - x); if(d < bd){ bd = d; best = i; } });
+    return best;
+  }
+  ['pointerdown','pointermove'].forEach(ev =>
+    svgEl.addEventListener(ev, e=>{ e.stopPropagation(); showAt(nearest(e.clientX)); }));
+  ['pointerup','pointerleave','pointercancel'].forEach(ev =>
+    svgEl.addEventListener(ev, e=>{ e.stopPropagation(); if(ev !== 'pointerup') hide(); }));
+} else {
+  document.getElementById('s7').remove();
+}
+
+/* the slider explainer only appears where there is no real ketone data to teach from */
+if(DATA.showExplainer === false) document.getElementById('s4').remove();
+
+/* ---------- closing summary ---------- */
+const SEAL = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0052cc" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-12"/></svg>`;
+const PIN = `<svg width="19" height="19" viewBox="0 0 17 17" fill="none" stroke="#0052cc" stroke-width="1.7" stroke-linejoin="round"><path d="M8.5 1.6l2.1 4.4 4.8.7-3.5 3.4.8 4.8-4.2-2.3-4.2 2.3.8-4.8L1.6 6.7l4.8-.7z"/></svg>`;
+let committed = false;
+
+const dLogged = DATA.carbs ? DATA.carbs.filter(d=>d.v).length : 0;
+const dUnder  = DATA.carbs ? DATA.carbs.filter(d=>d.v && d.v <= DATA.target).length : 0;
+
+function renderSummary(){
+  document.getElementById('sumWeek').textContent = DATA.week;
+  document.getElementById('sumHead').innerHTML = committed
+    ? `<div class="seal">${SEAL}</div><h1>You're set for next week</h1>`
+    : `<h1>${DATA.summaryTitle || DATA.actionTitle}</h1>`;
+
+  const hasAsk = !!DATA.ketoneAsk;
+  const foodCard = `
+    <p class="lab">${hasAsk && DATA.ketoneAsk.primary ? 'Keep doing this' : (committed ? 'Your action for next week' : (DATA.goalLabel || 'Your top action'))}</p>
+    <div class="txt">${committed ? SEAL : PIN}
+      <div><p>${DATA.goal}</p>
+        ${committed ? '<p class="hint">Saved. Your coach can see this too.</p>' : ''}
+      </div>
+    </div>
+    ${(DATA.swaps && DATA.swaps.length) ? '<button class="btn btn-secondary" id="seeRecipes">See recipes</button>' : ''}`;
+  const ketoCard = !hasAsk ? '' : `
+    <p class="lab">${DATA.ketoneAsk.primary ? 'Your action for next week' : 'Also this week'}</p>
+    <div class="txt">${BOLT_ASK}
+      <div><p>${DATA.ketoneAsk.title}</p>
+        <p class="hint">${DATA.ketoneAsk.detail}</p>
+      </div>
+    </div>`;
+  // whichever action drives the metric for this member goes first
+  document.getElementById('sumGoal').innerHTML = (hasAsk && DATA.ketoneAsk.primary) ? ketoCard : foodCard;
+  const keto = document.getElementById('sumKeto');
+  keto.innerHTML = !hasAsk ? '' : (DATA.ketoneAsk.primary ? foodCard : ketoCard);
+  keto.style.display = hasAsk ? '' : 'none';
+
+  if(DATA.swaps && DATA.swaps.length){
+    document.getElementById('rsheetTitle').textContent = DATA.actionTitle;
+    document.getElementById('rsheetSub').textContent = DATA.actionSub;
+    renderCards(DATA.swaps, document.getElementById('sumCards'));
+  }
+
+  const bonusEl = document.getElementById('sumBonus');
+  if(DATA.winCard && bonusEl){
+    // same card, used to bank a win instead of asking for one
+    bonusEl.innerHTML = `
+      <div class="bonus-card">
+        <div class="bonus-head">
+          <span class="ic">${ART3.flame}</span>
+          <div><b>${DATA.winCard.title}</b><p>${DATA.winCard.detail}</p></div>
+        </div>
+      </div>`;
+  } else if(DATA.ketoneDays){
+    // a member already logging ketones doesn't need to be asked to start
+    if(bonusEl) bonusEl.remove();
+  } else if(bonusEl) bonusEl.innerHTML = `
+    <div class="bonus-card">
+      <div class="bonus-head">
+        <span class="ic">${BOLT_ASK}</span>
+        <div><b>Bonus: try testing your ketones</b>
+          <p>One reading tells you whether the swap is working, days before the scale does.</p>
+        </div>
+      </div>
+      <div class="steps3">
+        <div class="step3">
+          <span class="ic">${ART3.plate}</span>
+          <p>Food logged</p>
+        </div>
+        <span class="arrow3">${ART3.arrow}</span>
+        <div class="step3">
+          <span class="ic">${ART3.drop}</span>
+          <p>Check ketones<br>2h later</p>
+        </div>
+        <span class="arrow3">${ART3.arrow}</span>
+        <div class="step3">
+          <span class="ic">${ART3.flame}</span>
+          <p>See if you're<br>burning fat</p>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('sumBtns').innerHTML = committed
+    ? `<button class="btn btn-primary" id="sumShare">Share with your coach</button>
+       <button class="btn btn-secondary" id="sumDone">Done for this week</button>`
+    : `<button class="btn btn-primary" id="sumTry">Sounds great</button>
+       <button class="btn btn-secondary" id="sumOther">Set Another Goal</button>`;
+
+  const see = document.getElementById('seeRecipes');
+  if(see && !see.dataset.bound){
+    see.dataset.bound = '1';
+    see.addEventListener('click', e=>{ e.stopPropagation(); openRecipeSheet(); });
+  }
+
+  const tryIt = document.getElementById('sumTry');
+  if(tryIt) tryIt.addEventListener('click', e=>{
+    e.stopPropagation(); committed = true; renderSummary();
+  });
+  const other = document.getElementById('sumOther');
+  if(other) other.addEventListener('click', e=>{ e.stopPropagation(); openCoach(); });
+  const done = document.getElementById('sumDone');
+  if(done) done.addEventListener('click', e=>{ e.stopPropagation(); finish(); });
+  const share = document.getElementById('sumShare');
+  if(share) share.addEventListener('click', e=>{
+    e.stopPropagation();
+    share.textContent = 'Sent to your coach';
+    share.classList.add('saved');
+  });
+}
+
+/* ---------- ketones explainer ---------- */
+const FACES = {
+  green:`<svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="19" fill="#1f9e7a"/><g stroke="#0d3f31" stroke-width="2.3" fill="none" stroke-linecap="round"><path d="M11.8 18.4c1.3-2.4 4-2.4 5.3 0"/><path d="M22.9 18.4c1.3-2.4 4-2.4 5.3 0"/></g><path d="M13.2 24.6c1.7 2.5 4 3.8 6.8 3.8s5.1-1.3 6.8-3.8" stroke="#0d3f31" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`,
+  yellow:`<svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="19" fill="#f3c04a"/><g fill="#3c2d10"><circle cx="14.4" cy="17.2" r="2"/><circle cx="25.6" cy="17.2" r="2"/></g><path d="M15 24.4c1.4 1.7 3.1 2.6 5 2.6s3.6-.9 5-2.6" stroke="#3c2d10" stroke-width="2.3" fill="none" stroke-linecap="round"/></svg>`,
+  purple:`<svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="19" fill="#b9c2f7"/><g fill="#16265e"><circle cx="14.2" cy="17.4" r="1.9"/><circle cx="25.4" cy="16.6" r="1.9"/></g><path d="M22.6 11.8c1.7-.9 3.5-.6 4.8.7" stroke="#16265e" stroke-width="1.9" fill="none" stroke-linecap="round"/><path d="M12.8 24.2c2.4-1.1 5-1.3 7.4-.6" stroke="#16265e" stroke-width="2.1" fill="none" stroke-linecap="round"/><path d="M19.4 27.4c3.6-.7 6.4.5 7.8 3.1-1.6 1.6-3.9 2.2-6.7 1.9-1.8-.2-2.9-1.1-3.1-2.6z" fill="#b9c2f7" stroke="#16265e" stroke-width="1.7" stroke-linejoin="round"/><g stroke="#16265e" stroke-width="1.3" stroke-linecap="round"><path d="M21.6 29.1c1.6-.2 2.9.1 3.9.9"/><path d="M21.2 31.2c1.4-.1 2.5.1 3.4.7"/></g></svg>`
+};
+const BOLT = c => `<svg viewBox="0 0 14 16" width="14" height="16"><path d="M8.4 1L2.6 9.4h3.5L5.4 15 11.4 7h-3.7L8.4 1z" fill="${c}" stroke="${c}" stroke-width="1.1" stroke-linejoin="round"/></svg>`;
+const PACE = {
+  rocket:`<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="#3f4a5c" stroke-width="1.3" stroke-linejoin="round"><path d="M8 1.5c2.3 2 3.4 4.4 3.4 7L8 12 4.6 8.5c0-2.6 1.1-5 3.4-7z"/><circle cx="8" cy="6.5" r="1.4"/><path d="M5.6 11.2 4 14.2l3-1.1M10.4 11.2 12 14.2l-3-1.1" stroke-linecap="round"/></svg>`,
+  rabbit:`<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="#3f4a5c" stroke-width="1.3" stroke-linejoin="round"><path d="M5.2 6.6C4.4 5 4.1 3.2 4.6 1.4c1.4.7 2.3 2.1 2.7 3.9M9.6 5.2c.2-1.8 1-3.2 2.4-3.9.5 1.9.1 3.7-.9 5.2"/><path d="M4.4 9.6a4 4 0 0 1 7.9 0c0 2.2-1.8 3.4-4 3.4s-3.9-1.2-3.9-3.4z"/><circle cx="9.9" cy="9.6" r=".9" fill="#3f4a5c" stroke="none"/></svg>`,
+  turtle:`<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="#3f4a5c" stroke-width="1.3" stroke-linejoin="round"><path d="M2.6 10.4a5.4 5.4 0 0 1 10.8 0z"/><path d="M13.4 10.4h1.2M2.6 10.4H1.4" stroke-linecap="round"/><path d="M6 10.2c0-1.6.9-2.9 2-2.9s2 1.3 2 2.9"/><path d="M4.4 11.6v1.6M11.6 11.6v1.6" stroke-linecap="round"/></svg>`
+};
+const COPY = {
+  green:{tint:'#e9f7f0', edge:'#8ed3b4', head:'Great choice!',
+    body:'Ketones stay high, so you burn fat and lose weight fastest.'},
+  yellow:{tint:'#fdf3dd', edge:'#f0c65c', head:'Just a few swaps away',
+    body:'Mixed fuel. Many people still lose weight here.'},
+  purple:{tint:'#eceefb', edge:'#a9b3f2', head:"Let's find a better fit",
+    body:'Ketones drop, so you burn carbs and weight loss slows.'}
+};
+const ZONE_COLOR = ['#8fbfe8','#74c9a4','#2f9c95'];  // carbs → mixed → fat
+
+(function(){
+  const TRACK = 264, LG = 46, SM = 30;
+  const mealTrack = document.getElementById('mealTrack');
+  if(!mealTrack) return;          // this slide is not in the build
+  const mealThumb = document.getElementById('mealThumb');
+  const ketThumb  = document.getElementById('ketThumb');
+  const wtThumb   = document.getElementById('wtThumb');
+  const zones = [...document.querySelectorAll('.zone')];
+  const insight = document.getElementById('insight');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // start where this member's own logs put them
+  const daily = DATA.ketones.carbs, ceiling = DATA.target * 1.6;
+  let carb = Math.min(0.95, Math.max(0.08, daily / ceiling));
+  let ket = 1 - carb, wt = 1 - carb, lastZone = -1, lastFace = '';
+
+  const faceKey = v => v > 0.62 ? 'purple' : v > 0.34 ? 'yellow' : 'green';
+  const zoneOf  = v => v > 0.666 ? 2 : v > 0.333 ? 1 : 0;
+  const paceKey = v => v > 0.62 ? 'rocket' : v > 0.34 ? 'rabbit' : 'turtle';
+
+  function paint(){
+    mealThumb.style.bottom = (carb * (TRACK - LG)) + 'px';
+    ketThumb.style.bottom  = (ket  * (TRACK - SM)) + 'px';
+    wtThumb.style.bottom   = (wt   * (TRACK - SM)) + 'px';
+    mealThumb.setAttribute('aria-valuenow', Math.round(carb * 100));
+
+    const face = faceKey(carb);
+    if(face !== lastFace){
+      lastFace = face;
+      mealThumb.innerHTML = FACES[face];
+      const c = COPY[face];
+      insight.style.background = c.tint;
+      insight.style.borderColor = c.edge;
+      document.getElementById('insightIco').innerHTML =
+        FACES[face].replace('width="40" height="40"','width="32" height="32"');
+      document.getElementById('insightHead').textContent = c.head;
+      document.getElementById('insightTxt').textContent = c.body;
+    }
+
+    const z = zoneOf(ket);
+    if(z !== lastZone){
+      lastZone = z;
+      zones.forEach(el => el.classList.toggle('live', +el.dataset.zone === z));
+      const b = ketThumb.querySelector('.bolt');
+      ketThumb.innerHTML = `<span class="bolt">${BOLT(ZONE_COLOR[z])}</span>`;
+      const bolt = ketThumb.querySelector('.bolt');
+      bolt.classList.add('pulse');
+      setTimeout(()=>bolt.classList.remove('pulse'), 460);
+    }
+    wtThumb.innerHTML = PACE[paceKey(wt)];
+  }
+
+  // ketones trail the meals; weight trails the ketones
+  function loop(){
+    const target = 1 - carb;
+    if(reduce){ ket = target; wt = target; }
+    else {
+      ket += (target - ket) * 0.075;
+      wt  += (ket - wt) * 0.042;
+    }
+    paint();
+    requestAnimationFrame(loop);
+  }
+
+  function setFrom(clientY){
+    const r = mealTrack.getBoundingClientRect();
+    const usable = r.height - LG;
+    carb = Math.min(1, Math.max(0, (r.bottom - clientY - LG/2) / usable));
+  }
+
+  let dragging = false;
+  mealThumb.addEventListener('pointerdown', e=>{
+    e.stopPropagation(); dragging = true;
+    mealThumb.setPointerCapture(e.pointerId);
+  });
+  mealThumb.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    e.stopPropagation(); setFrom(e.clientY);
+  });
+  ['pointerup','pointercancel'].forEach(ev =>
+    mealThumb.addEventListener(ev, e=>{ dragging = false; e.stopPropagation(); }));
+  mealTrack.addEventListener('pointerdown', e=>{ e.stopPropagation(); setFrom(e.clientY); });
+
+  mealThumb.addEventListener('keydown', e=>{
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){
+      e.preventDefault(); e.stopPropagation();
+      carb = Math.min(1, Math.max(0, carb + (e.key==='ArrowUp'||e.key==='ArrowRight' ? 0.08 : -0.08)));
+    }
+  });
+
+  // taps inside the demo must not advance the story
+  const sliders = document.getElementById('sliders');
+  ['pointerup','click'].forEach(ev =>
+    sliders.addEventListener(ev, e=>e.stopPropagation()));
+
+  paint();
+  requestAnimationFrame(loop);
+})();
+
+/* ---------- story engine (tap driven) ---------- */
+const slides = [...document.querySelectorAll('.slide')];
+const progress = document.getElementById('progress');
+const phone = document.getElementById('phone');
+const replay = document.getElementById('replay');
+
+slides.forEach(()=>{
+  const s = document.createElement('div'); s.className='seg'; s.innerHTML='<i></i>'; progress.appendChild(s);
+});
+const fills = [...progress.querySelectorAll('.seg i')];
+
+let idx = -1, done = false;
+
+function show(n){
+  if(n >= slides.length){ finish(); return; }
+  slides.forEach((s,i)=>{
+    s.classList.toggle('on', i===n);
+    s.classList.toggle('past', i<n);
+  });
+  fills.forEach((f,i)=>{ f.style.width = i<=n ? '100%' : '0%'; });
+  idx = n; done = false;
+  phone.classList.toggle('at-start', n === 0);
+  replay.classList.remove('on');
+  if(slides[n].id === 's5') ringPlay();
+  if(slides[n].id === 's6') renderSummary();
+}
+function next(){ show(idx+1); }
+function prev(){ if(idx>0) show(idx-1); }
+function finish(){
+  fills.forEach(f=>f.style.width='100%');
+  done = true;
+  replay.classList.add('on');
+}
+
+let downX = 0, downY = 0;
+
+document.getElementById('learnWhy').addEventListener('click', e=>{ e.stopPropagation(); next(); });
+
+/* recipe sheet on the summary */
+function openRecipeSheet(){ phone.classList.add('sheet-open'); }
+function closeRecipeSheet(){ phone.classList.remove('sheet-open'); }
+document.getElementById('rsheet').addEventListener('pointerdown', e=>e.stopPropagation());
+document.getElementById('rscrim').addEventListener('click', e=>{ e.stopPropagation(); closeRecipeSheet(); });
+document.getElementById('rsheetClose').addEventListener('click', e=>{ e.stopPropagation(); closeRecipeSheet(); });
+const s1scroll = document.getElementById('s1scroll');
+const actBlock = document.getElementById('actBlock');
+const scrollHint = document.getElementById('scrollHint');
+const s1cta = document.querySelector('.s1-cta');
+s1scroll.addEventListener('pointerup', e=>e.stopPropagation());
+function revealSwaps(){
+  if(!actBlock || !scrollHint) return;      // simple headline mode has nothing to reveal
+  scrollHint.classList.add('gone');
+  actBlock.classList.add('seen');
+  s1cta.classList.add('show');
+  // measure after the hint collapses so the heading lands right below the status bar
+  requestAnimationFrame(()=>{
+    s1scroll.scrollTo({ top: Math.max(0, actBlock.offsetTop - 160), behavior: 'smooth' });
+  });
+}
+document.getElementById('scrollDown').addEventListener('click', e=>{
+  e.stopPropagation(); revealSwaps();
+});
+
+s1scroll.addEventListener('scroll', ()=>{
+  const y = s1scroll.scrollTop;
+  if(y > 4) scrollHint.classList.add('gone');      // any movement retires it, for good
+  if(y > 90){
+    actBlock.classList.add('seen');                 // stays revealed once seen
+    s1cta.classList.add('show');
+  }
+}, {passive:true});
+recipeEl.addEventListener('pointerdown', e=>e.stopPropagation());
+document.getElementById('rcBack').addEventListener('click', e=>{ e.stopPropagation(); closeRecipe(); });
+document.getElementById('rcMark').addEventListener('click', e=>{ e.stopPropagation(); toggleSave(openName); });
+document.getElementById('rcSave').addEventListener('click', e=>{ e.stopPropagation(); toggleSave(openName); });
+
+const coachEl = document.getElementById('coach');
+const coachNote = document.getElementById('coachNote');
+function openCoach(){
+  coachNote.textContent = '';
+  coachEl.classList.add('on');
+  phone.classList.add('recipe-open');
+}
+function closeCoach(){
+  coachEl.classList.remove('on');
+  phone.classList.remove('recipe-open');
+}
+
+coachEl.addEventListener('pointerdown', e=>e.stopPropagation());
+document.getElementById('coachBack').addEventListener('click', e=>{ e.stopPropagation(); closeCoach(); });
+document.getElementById('coachChat').addEventListener('click', e=>{
+  e.stopPropagation();
+  coachNote.textContent = 'This would open your coach conversation.';
+});
+
+phone.addEventListener('pointerdown', e=>{ downX = e.clientX; downY = e.clientY; });
+phone.addEventListener('pointerup', e=>{
+  if(phone.classList.contains('recipe-open') || phone.classList.contains('sheet-open') || done) return;
+  const dx = e.clientX - downX, dy = Math.abs(e.clientY - downY);
+
+  // a deliberate horizontal swipe moves either way, on every screen
+  if(dx < -45 && dy < 70){ next(); return; }
+  if(dx >  45 && dy < 70){ prev(); return; }
+
+  const hit = e.target.closest ? e.target.closest('button, a, .card, .rsheet, .s6-cta, .s1-cta, .s1-scroll, .s6-scroll, .dual, .chart, .carbs') : null;
+  if(hit) return;                       // controls and scroll panels own their taps
+
+  const rect = phone.getBoundingClientRect();
+  ((e.clientX - rect.left) / rect.width < 0.32) ? prev() : next();
+});
+
+// edge strips give the scrolling screens the same tap-left / tap-right behaviour
+document.querySelectorAll('.edge').forEach(el=>{
+  el.addEventListener('click', e=>{
+    e.stopPropagation();
+    if(phone.classList.contains('recipe-open') || phone.classList.contains('sheet-open')) return;
+    el.dataset.nav === 'prev' ? prev() : next();
+  });
+});
+
+document.getElementById('close').addEventListener('click', e=>{ e.stopPropagation(); finish(); });
+document.getElementById('replayBtn').addEventListener('click', e=>{ e.stopPropagation(); show(0); });
+
+addEventListener('keydown', e=>{
+  if(phone.classList.contains('recipe-open')){
+    if(e.key==='Escape'){ coachEl.classList.contains('on') ? closeCoach() : closeRecipe(); }
+    return;
+  }
+  if(phone.classList.contains('sheet-open')){ if(e.key==='Escape') closeRecipeSheet(); return; }
+  if(e.key==='ArrowRight' || e.key===' '){ e.preventDefault(); next(); }
+  if(e.key==='ArrowLeft'){ prev(); }
+});
+
+show(0);
+</script>
