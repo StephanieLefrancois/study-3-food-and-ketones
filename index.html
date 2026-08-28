@@ -231,6 +231,7 @@ h1{font-family:var(--serif);font-size:26px;line-height:1.2;font-weight:400;lette
 .stat span{font-size:11.5px;color:var(--muted)}
 .thumb{position:relative;width:112px;flex:none;align-self:stretch;border-radius:10px;overflow:hidden}
 .thumb svg{position:absolute;inset:0;width:100%;height:100%}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .mark{
   position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;
   background:none;display:grid;place-items:center;border:0;padding:0;cursor:pointer;
@@ -264,6 +265,7 @@ h1{font-family:var(--serif);font-size:26px;line-height:1.2;font-weight:400;lette
 .rc-body::-webkit-scrollbar{display:none}
 .rc-hero{height:150px;border-radius:16px;overflow:hidden;position:relative}
 .rc-hero svg{position:absolute;inset:0;width:100%;height:100%}
+.rc-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .rc-title{font-family:var(--serif);font-size:25px;line-height:1.2;font-weight:400;letter-spacing:-.3px;color:var(--ink);margin:18px 0 0}
 .rc-stats{display:flex;margin:14px 0 0}
 .rc-stats .stat b{font-size:15px}
@@ -1655,7 +1657,7 @@ function renderCards(list, target){
     </div>
     <div class="thumb">
       ${PHOTOS[s.art]
-        ? `<img src="${PHOTOS[s.art]}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">`
+        ? `<img src="${PHOTOS[s.art]}" alt="">`
         : `<svg viewBox="0 0 112 110" preserveAspectRatio="xMidYMid slice">${ART[s.art]}</svg>`}
       <button class="mark" data-mark aria-label="Bookmark ${s.name}">${BOOKMARK(saved.has(s.name))}</button>
     </div>
@@ -1698,8 +1700,9 @@ function openRecipe(name){
   const s = findSwap(name);
   if(!s) return;
   openName = name;
-  document.getElementById('rcHero').innerHTML =
-    `<svg viewBox="0 0 112 110" preserveAspectRatio="xMidYMid slice">${ART[s.art]}</svg>`;
+  document.getElementById('rcHero').innerHTML = PHOTOS[s.art]
+    ? `<img src="${PHOTOS[s.art]}" alt="">`
+    : `<svg viewBox="0 0 112 110" preserveAspectRatio="xMidYMid slice">${ART[s.art]}</svg>`;
   document.getElementById('rcName').textContent = s.name;
   document.getElementById('rcStats').innerHTML = `
     <div class="stat"><b>${s.time}</b><span>Total time</span></div>
