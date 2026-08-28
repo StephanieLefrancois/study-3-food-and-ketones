@@ -369,7 +369,7 @@ h1{font-family:var(--serif);font-size:26px;line-height:1.2;font-weight:400;lette
 
 /* story-style edge taps on the scrolling screens */
 .edge{
-  position:absolute;top:92px;bottom:0;width:30px;z-index:15;
+  position:absolute;top:92px;bottom:0;width:76px;z-index:15;
   border:0;padding:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 .edge-l{left:0}
@@ -2197,14 +2197,14 @@ phone.addEventListener('pointerup', e=>{
   const dx = e.clientX - downX, dy = Math.abs(e.clientY - downY);
 
   // a deliberate horizontal swipe moves either way, on every screen
-  if(dx < -45 && dy < 70){ next(); return; }
-  if(dx >  45 && dy < 70){ prev(); return; }
+  if(dx < -32 && dy < 70){ next(); return; }
+  if(dx >  32 && dy < 70){ prev(); return; }
 
   const hit = e.target.closest ? e.target.closest('button, a, .card, .rsheet, .s6-cta, .s1-cta, .s1-scroll, .s6-scroll, .dual, .chart, .carbs') : null;
   if(hit) return;                       // controls and scroll panels own their taps
 
   const rect = phone.getBoundingClientRect();
-  ((e.clientX - rect.left) / rect.width < 0.32) ? prev() : next();
+  ((e.clientX - rect.left) / rect.width < 0.40) ? prev() : next();
 });
 
 // edge strips give the scrolling screens the same tap-left / tap-right behaviour
