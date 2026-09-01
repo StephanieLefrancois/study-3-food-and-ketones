@@ -1,5 +1,5 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Weekly Report — Study prototype 3b (one-page first screen, bookmark all)</title>
+<title>Weekly Report — 3g (recipes in a sheet, Next button)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
@@ -48,6 +48,14 @@ body{font-family:var(--sans);background:#dfe3ea;display:grid;place-items:center;
 .phone.at-start .progress{opacity:0}
 .seg{flex:1;height:4px;border-radius:2px;background:#dcdfe5;overflow:hidden}
 .seg i{display:block;height:100%;width:0;background:#0c1422;border-radius:2px;transition:width .34s cubic-bezier(.3,.8,.3,1)}
+.back-btn{
+  position:absolute;top:78px;left:22px;z-index:45;width:34px;height:34px;border:0;background:none;padding:0;
+  display:grid;place-items:center;cursor:pointer;border-radius:50%;
+  opacity:0;visibility:hidden;transition:opacity .25s ease;
+}
+.back-btn.on{opacity:1;visibility:visible}
+.back-btn:active{transform:scale(.92)}
+.back-btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .close{
   position:absolute;top:78px;right:22px;z-index:45;width:34px;height:34px;border:0;background:none;padding:0;
   display:grid;place-items:center;cursor:pointer;color:var(--ink);border-radius:50%;
@@ -58,7 +66,7 @@ body{font-family:var(--sans);background:#dfe3ea;display:grid;place-items:center;
 
 .deck{position:absolute;inset:0;z-index:10}
 .slide{
-  position:absolute;inset:0;padding:160px 26px 46px;background:#fff;
+  position:absolute;inset:0;padding:160px 26px 100px;background:#fff;
   opacity:0;visibility:hidden;transform:translateX(var(--x,7%)) scale(.985);
   transition:opacity .42s ease, transform .52s cubic-bezier(.22,.9,.24,1), visibility .52s;overflow:hidden;
 }
@@ -111,7 +119,8 @@ h1{font-family:var(--serif);font-size:26px;line-height:1.2;font-weight:400;lette
 #bookmarkAll{margin:12px 0 6px;box-shadow:none}
 #s1.single .card:active{background:#fafbfd}
 #s1.single .thumb{width:104px}
-#s1.single .s1-scroll{padding-left:16px;padding-right:16px;padding-bottom:64px}
+#s1.single .s1-scroll{padding-left:26px;padding-right:26px;padding-bottom:170px}
+#s1.single #openRecipes{margin-top:34px;max-width:260px;align-self:center}
 /* this variant shows the story indicator immediately, so swiping reads as available */
 .phone.at-start .progress{opacity:1}
 .avatar{width:46px;height:46px;border-radius:50%;overflow:hidden;box-shadow:0 1px 3px rgba(20,30,60,.18);flex:none}
@@ -156,6 +165,13 @@ h1{font-family:var(--serif);font-size:26px;line-height:1.2;font-weight:400;lette
 }
 .act-block.seen{opacity:1;transform:none}
 .act-block h2{font-family:var(--serif);font-size:24px;font-weight:400;letter-spacing:-.3px;text-align:center;margin:0;color:var(--ink)}
+.next-bar{
+  position:absolute;left:0;right:0;bottom:0;z-index:28;padding:12px 26px 24px;
+  background:linear-gradient(to top,#fff 58%,rgba(255,255,255,.94) 80%,rgba(255,255,255,0));
+  display:none;
+}
+.phone.has-next .next-bar{display:block}
+.next-bar .btn{box-shadow:0 8px 22px -12px rgba(20,40,90,.55)}
 .s1-cta{
   position:absolute;left:0;right:0;bottom:0;z-index:20;padding:16px 26px 32px;
   background:linear-gradient(to top,#fff 56%,rgba(255,255,255,.94) 76%,rgba(255,255,255,0));
@@ -163,6 +179,12 @@ h1{font-family:var(--serif);font-size:26px;line-height:1.2;font-weight:400;lette
   transition:opacity .38s ease, transform .42s cubic-bezier(.2,.8,.2,1);
 }
 .s1-cta .btn{pointer-events:none}
+#s1.single .s1-cta .btn{animation:ctaNudge 1.9s ease-in-out 3}
+@keyframes ctaNudge{
+  0%,100%{transform:translateY(0);box-shadow:0 8px 22px -12px rgba(20,40,90,.55)}
+  50%{transform:translateY(-4px);box-shadow:0 14px 26px -12px rgba(20,40,90,.6)}
+}
+@keyframes hintFade{0%{opacity:0}12%{opacity:1}78%{opacity:1}100%{opacity:0}}
 .s1-cta.show{opacity:1;transform:none}
 .s1-cta.show .btn{pointer-events:auto}
 
@@ -300,7 +322,7 @@ h1{font-family:var(--serif);font-size:26px;line-height:1.2;font-weight:400;lette
 @keyframes draw{to{stroke-dashoffset:0}}
 
 /* 3 · carbs + ketones */
-.carbs{position:relative;margin-top:48px;padding:0 2px}
+.carbs{position:relative;margin-top:40px;padding:0 2px}
 .band-label{
   font-size:10.5px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
   color:var(--muted);margin:0 0 9px 30px;
@@ -642,6 +664,9 @@ h2,h3,h4,.rc-title,.act-block h2,.tile p,.rsheet h2,.coach-body h2{
 
   <div class="progress" id="progress"></div>
 
+  <button class="back-btn" id="backBtn" aria-label="Previous screen">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0c1422" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 4L7.5 12l8 8"/></svg>
+  </button>
   <button class="close" id="close" aria-label="Close recap">
     <svg width="17" height="17" viewBox="0 0 17 17"><path d="M1 1l15 15M16 1L1 16" stroke="#0c1422" stroke-width="1.7" stroke-linecap="round"/></svg>
   </button>
@@ -928,6 +953,10 @@ h2,h3,h4,.rc-title,.act-block h2,.tile p,.rsheet h2,.coach-body h2{
     </div>
   </div>
 
+  <div class="next-bar" id="nextBar">
+    <button class="btn btn-primary" id="nextBtn">Next</button>
+  </div>
+
   <div class="replay" id="replay"><button id="replayBtn">Watch again</button></div>
   <div class="homebar"></div>
 </div>
@@ -938,6 +967,7 @@ const DATA = {
   "chipsLabel": "Breakfasts with the most carbs",
   "week": "July 31 - Aug 6 2026",
   "singlePage": true,
+  "ctaLabel": "Next",
   "showExplainer": false,
   "goal": "Swap sweet breakfast bowls for fat-based ones",
   "ketoneAsk": null,
@@ -1729,13 +1759,14 @@ if(DATA.swaps && DATA.swaps.length){
   renderCards(DATA.swaps);
   if(DATA.singlePage){
     document.getElementById('s1').classList.add('single');
-    document.getElementById('actSteps').innerHTML =
-      '<button class="btn btn-secondary" id="bookmarkAll">Bookmark all recipes</button>';
-    document.getElementById('actBlock').classList.add('seen');
+    // recipes move into the bottom sheet; the headline gets a secondary button
+    document.getElementById('actBlock').remove();
+    document.querySelector('.s1-hero').insertAdjacentHTML('beforeend',
+      '<button class="btn btn-secondary" id="openRecipes">See recipes</button>');
+    const s1ctaEl = document.querySelector('.s1-cta');
+    if(s1ctaEl) s1ctaEl.remove();          // the shared Next bar covers screen 1 too
     document.getElementById('scrollHint').remove();
-    // no button on this variant — swiping or tapping moves the story on
-    const sticky = document.querySelector('.s1-cta');
-    if(sticky) sticky.remove();
+
   }
 } else if(DATA.wins || DATA.logging){
   document.getElementById('cards').remove();
@@ -2106,6 +2137,9 @@ function show(n){
   fills.forEach((f,i)=>{ f.style.width = i<=n ? '100%' : '0%'; });
   idx = n; done = false;
   phone.classList.toggle('at-start', n === 0);
+  phone.classList.toggle('has-next', n < slides.length - 1);   // every screen but the last
+  const backEl = document.getElementById('backBtn');
+  if(backEl) backEl.classList.toggle('on', n > 0);
   replay.classList.remove('on');
   if(slides[n].id === 's5') ringPlay();
   if(slides[n].id === 's6') renderSummary();
@@ -2119,6 +2153,15 @@ function finish(){
 }
 
 let downX = 0, downY = 0;
+
+const openRecipesBtn = document.getElementById('openRecipes');
+if(openRecipesBtn) openRecipesBtn.addEventListener('click', e=>{
+  e.stopPropagation();
+  document.getElementById('rsheetTitle').textContent = DATA.actionTitle;
+  document.getElementById('rsheetSub').textContent = DATA.actionSub;
+  renderCards(DATA.swaps, document.getElementById('sumCards'));
+  openRecipeSheet();
+});
 
 const bookmarkAllBtn = document.getElementById('bookmarkAll');
 if(bookmarkAllBtn) bookmarkAllBtn.addEventListener('click', e=>{
@@ -2201,7 +2244,7 @@ phone.addEventListener('pointerup', e=>{
   if(dx < -32 && dy < 70){ next(); return; }
   if(dx >  32 && dy < 70){ prev(); return; }
 
-  const hit = e.target.closest ? e.target.closest('button, a, .card, .rsheet, .s6-cta, .s1-cta, .s1-scroll, .s6-scroll, .dual, .chart, .carbs') : null;
+  const hit = e.target.closest ? e.target.closest('button, a, .card, .rsheet, .s6-cta, .s1-cta, .next-bar, .s1-scroll, .s6-scroll, .dual, .chart, .carbs') : null;
   if(hit) return;                       // controls and scroll panels own their taps
 
   const rect = phone.getBoundingClientRect();
@@ -2238,6 +2281,12 @@ addEventListener('keydown', e=>{
   if(e.key==='ArrowRight' || e.key===' '){ e.preventDefault(); next(); }
   if(e.key==='ArrowLeft'){ prev(); }
 });
+
+const backBtn = document.getElementById('backBtn');
+if(backBtn) backBtn.addEventListener('click', e=>{ e.stopPropagation(); prev(); });
+
+const nextBtn = document.getElementById('nextBtn');
+if(nextBtn) nextBtn.addEventListener('click', e=>{ e.stopPropagation(); next(); });
 
 show(0);
 
