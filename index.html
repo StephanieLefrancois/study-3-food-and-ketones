@@ -702,6 +702,14 @@ h2,h3,h4,.rc-title,.act-block h2,.tile p,.rsheet h2,.coach-body h2{
       </div>
     </section>
 
+    <section class="slide" id="s2">
+      <h1 class="up d1" id="weightTitle"></h1>
+      <p class="sub up d2" id="weightSub"></p>
+      <div class="tiles up d3" id="tiles"></div>
+      <div class="chart up d4 trend" id="trend"></div>
+    </section>
+
+
     <section class="slide" id="s5">
       <h1 class="up d1" id="patternsTitle"></h1>
       <p class="sub up d2" id="patternsSub"></p>
@@ -718,26 +726,6 @@ h2,h3,h4,.rc-title,.act-block h2,.tile p,.rsheet h2,.coach-body h2{
       <div class="chips" id="chips"></div>
     </section>
 
-    <section class="slide" id="s3">
-      <h1 class="up d1" id="carbsTitle"></h1>
-      <p class="sub up d2" id="carbsSub"></p>
-
-      <div class="carbs up d3">
-        <div class="chart-tip"></div>
-        <div class="scrub-guide"></div>
-        <div class="key key-top">
-          <div class="key-row">
-            <span><i style="background:#8f93ea"></i>3+ meals logged</span>
-            <span><i style="background:#f4f5fe;border:1.5px solid #c9cbf7"></i>Under 3 meals</span>
-          </div>
-        </div>
-        <div class="plot">
-          <div class="target" id="target"><span id="targetLabel"></span></div>
-          <div class="bars" id="bars"></div>
-        </div>
-        <div class="xaxis" id="xaxis"></div>
-      </div>
-    </section>
 
     <section class="slide" id="s9">
       <h1 class="up d1" id="lockTitle"></h1>
@@ -815,24 +803,7 @@ h2,h3,h4,.rc-title,.act-block h2,.tile p,.rsheet h2,.coach-body h2{
       </div>
     </section>
 
-    <section class="slide" id="s2">
-      <h1 class="up d1" id="weightTitle"></h1>
-      <p class="sub up d2" id="weightSub"></p>
-      <div class="tiles up d3" id="tiles"></div>
-      <div class="chart up d4 trend" id="trend"></div>
-    </section>
 
-    <section class="slide" id="s7">
-      <h1 class="up d1" id="dualTitle"></h1>
-      <p class="sub up d2" id="dualSub"></p>
-      <div class="dual up d3" id="dualChart"></div>
-      <div class="legend-dual up d4">
-        <span><i style="background:#f0ab2e"></i>Weight</span>
-        <span><i style="background:#eef4fb;border:1.5px solid #9cc7ee"></i>Carb-fueled (0.0–0.2)</span>
-        <span><i style="background:#dff0e6;border:1.5px solid #8ecfa6"></i>Mixed (0.3–0.4)</span>
-        <span><i style="background:#2fa079"></i>Fat-fueled (0.5+)</span>
-      </div>
-    </section>
 
     <section class="slide" id="s4">
       <div class="vcard up d1">
@@ -973,8 +944,6 @@ const DATA = {
   "ketoneAsk": null,
   "target": 60,
   "summaryTitle": "Next week, focus on breakfast",
-  "carbsTitle": "Two of your four logged days came in over your 60g target.",
-  "carbsSub": "Your ketone readings sit underneath each day, so you can see what the food did.",
   "pairTitle": "Your lower-carb days lifted your ketones.",
   "pairSub": "The two days under 40g reached 0.3. The two over 60g dropped back to 0.1.",
   "headline": "Your weight held steady this week, which is normal this early. {Swapping the sweet breakfast bowls} should be enough to get it moving again.",
@@ -1077,35 +1046,6 @@ const DATA = {
       "v": 0.1
     }
   ],
-  "dual": {
-    "title": "Your ketones never reached 0.5, so your weight stopped moving.",
-    "sub": "Ketosis starts at 0.5. Your best days reached 0.3, so your body kept burning carbs and the scale followed.",
-    "wLabels": [
-      216,
-      214,
-      212,
-      210,
-      208
-    ],
-    "wSeries": [
-      213.0,
-      212.9,
-      212.7,
-      212.6,
-      212.6,
-      212.5,
-      212.4
-    ],
-    "kLabels": [
-      "0.8",
-      "0.6",
-      "0.4",
-      "0.2",
-      "0.0"
-    ],
-    "kMax": 0.8,
-    "ketosis": 0.5
-  },
   "ketones": {
     "carbs": 71,
     "value": "0.2"
@@ -1322,23 +1262,31 @@ const AVATAR_SRC = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEB
 const AVATAR = (s)=>`<img src="${AVATAR_SRC}" alt="" width="${s}" height="${s}" style="width:100%;height:100%;object-fit:cover;display:block">`;
 
 /* ---------- render ---------- */
-document.getElementById('avatarSlot').innerHTML = AVATAR(46);
-document.getElementById('week').textContent = DATA.week;
-document.getElementById('headline').innerHTML =
-  DATA.headline.replace('{', '<em>').replace('}', '</em>');
-document.getElementById('carbsTitle').textContent = DATA.carbsTitle;
-document.getElementById('carbsSub').textContent = DATA.carbsSub;
-document.getElementById('patternsTitle').textContent = DATA.patternsTitle || 'Top carb patterns';
+const safeSet = (id, prop, val) => {
+  const el = document.getElementById(id);
+  if(el) el[prop] = val;
+};
+const safeRemove = (id) => {
+  const el = document.getElementById(id);
+  if(el) el.remove();
+};
 
-document.getElementById('weightTitle').textContent = DATA.weightTitle || 'How this affects your weight';
-document.getElementById('weightSub').textContent = DATA.weightSub ||
-  'Day-to-day changes are normal. Look at your overall trend  to see your progress over time.';
+safeSet('avatarSlot', 'innerHTML', AVATAR(46));
+safeSet('week', 'textContent', DATA.week);
+safeSet('headline', 'innerHTML', DATA.headline.replace('{', '<em>').replace('}', '</em>'));
+safeSet('patternsTitle', 'textContent', DATA.patternsTitle || 'Top carb patterns');
+
+safeSet('weightTitle', 'textContent', DATA.weightTitle || 'How this affects your weight');
+safeSet('weightSub', 'textContent', DATA.weightSub ||
+  'Day-to-day changes are normal. Look at your overall trend  to see your progress over time.');
 const reassureEl = document.getElementById('reassure');
-DATA.reassure ? reassureEl.textContent = DATA.reassure : reassureEl.remove();
-document.getElementById('scrollCue').textContent = DATA.scrollCue || 'Scroll for your swaps';
-document.getElementById('learnWhy').textContent = DATA.ctaLabel || 'See your numbers';
-document.getElementById('actTitle').textContent = DATA.actionTitle;
-document.getElementById('actSub').textContent = DATA.actionSub;
+if(reassureEl) {
+  DATA.reassure ? reassureEl.textContent = DATA.reassure : reassureEl.remove();
+}
+safeSet('scrollCue', 'textContent', DATA.scrollCue || 'Scroll for your swaps');
+safeSet('learnWhy', 'textContent', DATA.ctaLabel || 'See your numbers');
+safeSet('actTitle', 'textContent', DATA.actionTitle);
+safeSet('actSub', 'textContent', DATA.actionSub);
 
 
 const BOLT_ASK = `<svg width="18" height="20" viewBox="0 0 18 20" fill="none" stroke="#2fa079" stroke-width="1.8" stroke-linejoin="round"><path d="M10.4 1L3 10.6h4.2l-.7 8.4L15 8.6h-4.6L10.4 1z"/></svg>`;
@@ -1501,9 +1449,11 @@ function attachScrub(host, cols, tip, guide, content){
     <div class="chart-tip" id="trendTip"></div>`;
 
   const path = document.querySelector('#trend path.line');
-  const len = path.getTotalLength();
-  path.style.strokeDasharray = len;
-  path.style.strokeDashoffset = len;
+  if(path) {
+    const len = path.getTotalLength();
+    path.style.strokeDasharray = len;
+    path.style.strokeDashoffset = len;
+  }
 
   document.getElementById('tiles').innerHTML = `
     <div class="tile"><p>Weekly avg</p><b>${w.avg}</b><i>lbs</i></div>
@@ -1550,20 +1500,27 @@ function drawCarbs(ids){
   const days = DATA.carbs, target = DATA.target;
   const peak = Math.max(target, ...days.map(d=>d.v||0));
   const scale = 122 / peak;
-  document.getElementById(ids.target).style.bottom = (target*scale) + 'px';
-  document.getElementById(ids.label).textContent = target + 'g carb target';
-  document.getElementById(ids.bars).innerHTML = days.map((d,i)=>{
+  const targetEl = document.getElementById(ids.target);
+  if(targetEl) targetEl.style.bottom = (target*scale) + 'px';
+  const labelEl = document.getElementById(ids.label);
+  if(labelEl) labelEl.textContent = target + 'g carb target';
+  const barsEl = document.getElementById(ids.bars);
+  if(barsEl) barsEl.innerHTML = days.map((d,i)=>{
     if(!d.v) return '<div class="col"><span class="val" style="opacity:.35">—</span></div>';
     return `<div class="col">
       <span class="val">${d.v}</span>
       <div class="bar ${d.logs>=3?'solid':'hollow'}" style="height:${(d.v*scale).toFixed(0)}px;transition-delay:${(0.1*i+0.15).toFixed(2)}s"></div>
     </div>`;
   }).join('');
-  document.getElementById(ids.axis).innerHTML = days.map(d=>`<span>${d.label}</span>`).join('');
+  const axisEl = document.getElementById(ids.axis);
+  if(axisEl) axisEl.innerHTML = days.map(d=>`<span>${d.label}</span>`).join('');
 
   // scrub for a day's numbers
-  const host = document.getElementById(ids.bars).closest('.carbs');
-  const cols = [...document.getElementById(ids.bars).children];
+  const barsParent = document.getElementById(ids.bars);
+  if(!barsParent) return;
+  const host = barsParent.closest('.carbs');
+  if(!host) return;
+  const cols = [...barsParent.children];
   attachScrub(host, cols, host.querySelector('.chart-tip'), host.querySelector('.scrub-guide'), i=>{
     const d = days[i];
     if(!d.v) return `<b>Nothing logged</b><span>${d.label}</span>`;
@@ -1575,7 +1532,8 @@ function drawCarbs(ids){
 if(DATA.carbs){
   drawCarbs({target:'target', label:'targetLabel', bars:'bars', axis:'xaxis'});
 } else {
-  document.getElementById('s3').remove();
+  const s3 = document.getElementById('s3');
+  if(s3) s3.remove();
 }
 
 /* the paired screen adds the readings under the same days */
@@ -1586,7 +1544,8 @@ if(DATA.ketoneDays && DATA.carbs){
 
   const vals = DATA.ketoneDays.map(d=>d.v).filter(v=>v != null);
   const kMax = Math.max(0.6, Math.max(...vals) * 1.18), band = 68, kScale = band / kMax;
-  document.getElementById('ktarget').style.top = (0.5*kScale) + 'px';
+  const ktarget = document.getElementById('ktarget');
+  if(ktarget) ktarget.style.top = (0.5*kScale) + 'px';
   document.getElementById('ketoStrip').innerHTML = DATA.ketoneDays.map((d,i)=>{
     if(d.v == null) return '<div class="kcol"><span class="kmiss">—</span></div>';
     const h = Math.max(7, Math.round(d.v * kScale));
@@ -1633,17 +1592,20 @@ const sharePct = Math.round(patternG / weekG * 100);
 
 const ringArc = document.getElementById('ringArc');
 const ringPct = document.getElementById('ringPct');
-if(hasPatterns){
+if(hasPatterns && ringArc){
 ringArc.style.strokeDasharray = RING_C;
 ringArc.style.strokeDashoffset = RING_C;
 
 const patSub = document.getElementById('patternsSub');
-if(DATA.patternsSub === '') patSub.remove();
-else patSub.textContent = DATA.patternsSub ||
+if(patSub && DATA.patternsSub === '') patSub.remove();
+else if(patSub) patSub.textContent = DATA.patternsSub ||
   `Together, these three foods made up ${sharePct}% of the carbs you logged last week.`;
 const chipsLabel = document.getElementById('chipsLabel');
-DATA.chipsLabel ? chipsLabel.textContent = DATA.chipsLabel : chipsLabel.remove();
-document.getElementById('chips').innerHTML = DATA.patterns.map((p,i)=>`
+if(chipsLabel) {
+  DATA.chipsLabel ? chipsLabel.textContent = DATA.chipsLabel : chipsLabel.remove();
+}
+const chipsEl = document.getElementById('chips');
+if(chipsEl) chipsEl.innerHTML = DATA.patterns.map((p,i)=>`
   <div class="chip up d${i+4}"><span>${p.name}</span><b>${p.g}g</b></div>`).join('');
 }
 
@@ -1813,8 +1775,6 @@ if(DATA.dual && DATA.ketoneDays){
   }).join('');
 
   const ketoY = kY(D.ketosis);
-  document.getElementById('dualTitle').textContent = D.title;
-  document.getElementById('dualSub').textContent = D.sub;
   document.getElementById('dualChart').innerHTML = `
     <svg viewBox="0 0 330 250" width="100%" height="250" aria-label="Weight against ketone readings">
       <g stroke="#eceef2" stroke-width="1">
@@ -1879,11 +1839,13 @@ if(DATA.dual && DATA.ketoneDays){
   ['pointerup','pointerleave','pointercancel'].forEach(ev =>
     svgEl.addEventListener(ev, e=>{ e.stopPropagation(); if(ev !== 'pointerup') hide(); }));
 } else {
-  document.getElementById('s7').remove();
+  const s7 = document.getElementById('s7');
+  if(s7) s7.remove();
 }
 
 /* the slider explainer only appears where there is no real ketone data to teach from */
-if(DATA.showExplainer === false) document.getElementById('s4').remove();
+const s4 = document.getElementById('s4');
+if(DATA.showExplainer === false && s4) s4.remove();
 
 /* ---------- closing summary ---------- */
 const SEAL = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0052cc" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-12"/></svg>`;
